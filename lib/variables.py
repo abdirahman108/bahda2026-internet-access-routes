@@ -18,7 +18,7 @@ OUT_SHORT = {0: "No access", 1: "Smartphone data", 2: "Feature-phone data", 3: "
 CATS = [
     ("residence", "Residence", 1, [1, 2, 3]),
     ("head_sex", "Sex of household head", 2, [2, 1]),
-    ("head_education", "Education of household head", 0, [0, 1, 2, 3, 4]),
+    ("head_education", "Education of household head", 1, [1, 2, 3, 4, 0]),
     ("head_marital_status", "Marital status of household head", 1, [1, 2, 3, 4, 5]),
     ("head_employment", "Employment status of household head", 1, [1, 2, 3, 4]),
     ("primary_income_source", "Primary household income source", 1, [1, 2, 3, 4, 5, 6, 7]),
@@ -50,6 +50,9 @@ EXTRA = ["head_marital_status", "primary_income_source", "basic_mobile", "comput
 def load():
     df, meta = pyreadstat.read_dta(str(DATA))
     vl = {k: meta.value_labels.get(v, {}) for k, v in meta.variable_to_label.items()}
+    # Q106 code 0 is "Missing/unspecified" in the BAHDA variable guide and the Atlas (Table 1.1.8); it is kept
+    # as its own "Not reported" category so no household is dropped. Older extracts label it "No schooling".
+    vl.setdefault("head_education", {})[0] = "Not reported"
     for c in df.columns:
         if c not in ("sub_zone",) and df[c].dtype != object:
             pass

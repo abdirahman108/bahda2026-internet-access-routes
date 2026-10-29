@@ -26,7 +26,7 @@ foreach v in head_age household_size {
 }
 
 * Reference categories as in Table 1 (sex: male = 2 is the base)
-local A i.residence head_age10 ib2.head_sex i.head_education household_size
+local A i.residence head_age10 ib2.head_sex ib1.head_education household_size
 local B i.head_employment i.monthly_expenditure i.electricity_source i.youth_vocational_training
 local C i.smartphone
 
@@ -44,7 +44,7 @@ testparm household_size
 * omitted or with an extreme estimate (quasi-separation), as in the paper.
 
 * Average marginal effects (percentage points = x100) and adjusted predictions
-margins, dydx(i.residence i.head_sex i.head_education i.head_employment i.monthly_expenditure ///
+margins, dydx(i.residence i.head_sex ib1.head_education i.head_employment i.monthly_expenditure ///
     i.electricity_source i.youth_vocational_training i.smartphone)
 margins residence monthly_expenditure electricity_source smartphone
 
@@ -60,7 +60,7 @@ svy: mlogit DV_internet_access_mode `A' `B' `C' i.head_marital_status i.primary_
     i.basic_mobile i.computer_tablet i.head_digital_literacy, baseoutcome(0) rrr
 
 * Unweighted model family (Supplementary Table S5); raw age, lowest code as reference
-local X i.residence i.head_sex i.head_education i.monthly_expenditure i.smartphone ///
+local X i.residence i.head_sex ib1.head_education i.monthly_expenditure i.smartphone ///
     i.electricity_source i.head_employment i.youth_vocational_training c.head_age c.household_size
 mlogit DV_internet_access_mode `X', baseoutcome(0)
 estat ic
