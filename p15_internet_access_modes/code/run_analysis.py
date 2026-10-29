@@ -1,7 +1,6 @@
 """Paper 15 analysis: ways households access the internet in Borama District.
 
-Survey-weighted analysis of the ten predictors on the BAHDA-2026 ICT title and
-variable alignment sheet: descriptives, outcome-scale scan, design-based
+Survey-weighted analysis of the ten selected predictors: descriptives, outcome-scale scan, design-based
 bivariate screening, multicollinearity, sequential multinomial models,
 average marginal effects, diagnostics and sensitivity analyses.
 The unweighted model family is in model_family.py.

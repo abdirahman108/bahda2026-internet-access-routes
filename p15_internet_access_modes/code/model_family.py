@@ -1,6 +1,6 @@
 """Unweighted model family for the nominal outcome (Supplementary Table S5).
 
-Fits, on the ten alignment-sheet predictors (age and household size in raw
+Fits, on the ten selected predictors (age and household size in raw
 units, lowest code of each categorical predictor as reference):
   1. multinomial logit (maximum likelihood)
   2-4. ridge, lasso and elastic-net multinomial logit (10-fold CV deviance)

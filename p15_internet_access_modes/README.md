@@ -1,7 +1,7 @@
 # Paper 15: Ways households access the internet in Borama District (BAHDA-2026)
 
-Analysis code for the BAHDA-2026 Paper 15 manuscript. Predictors are the ten variables of the
-BAHDA-2026 ICT title and variable alignment sheet (IV1–IV10); the outcome is the household's main way of
+Analysis code for the BAHDA-2026 Paper 15 manuscript. Predictors are ten household and
+household-head characteristics selected a priori for their relevance to internet access; the outcome is the household's main way of
 accessing the internet at home (five nominal categories).
 
 | Step | File | What it does |
