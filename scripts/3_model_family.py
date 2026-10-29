@@ -1,4 +1,4 @@
-"""Step 3: Fit alternative models for comparison (Supplementary Table S5).
+"""Step 3: Fit alternative models for comparison (Table 5).
 
 These models don't use the survey weights. They exist only so that you can compare how well other
 model types fit. The results in the manuscript come from the weighted model in
