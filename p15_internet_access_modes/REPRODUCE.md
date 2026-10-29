@@ -12,6 +12,7 @@ manuscript automatically.
 | BAHDA-2026 microdata | Not in this repository (see step 2). |
 | Python 3.11 or newer | Results were produced with Python 3.13 and the package versions in `requirements.txt`. |
 | Stata 16 or newer (optional) | Needed only to rebuild the analytical file from the raw survey file, or to run the Stata version of the analysis. |
+| Repository access | The repository is private. Request access from the corresponding author (abdirahman@amoud.edu.so) with your GitHub username. |
 | git | To clone the repository. |
 
 The repository layout:
@@ -60,6 +61,8 @@ asserts that 2,707 households remain. It saves `data/p15_internet_access_modes_c
 `assert` fails, the source file differs from the one used for the paper.
 
 ## 4. Set up Python
+
+Once you have been given access to the private repository:
 
 ```bash
 git clone https://github.com/abdirahman108/amoud-bahda-analysis.git
