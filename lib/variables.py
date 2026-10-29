@@ -1,12 +1,12 @@
-"""Load the cleaned Paper 15 file and build model design matrices."""
+"""Variable definitions, data loading and model design matrices."""
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import pyreadstat
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data" / "p15_internet_access_modes_clean.dta"
-OUT = ROOT / "output"
+DATA = ROOT / "data" / "borama_internet_access.dta"
+OUT = ROOT / "outputs"
 
 OUTCOME = "DV_internet_access_mode"
 OUT_LABELS = {0: "No internet access", 1: "Mobile data on smartphone", 2: "Mobile data on feature phone",
@@ -34,7 +34,7 @@ CONTS = [("head_age", "Age of household head (years)", 10.0),
          ("household_size", "Household size (members)", 1.0)]
 
 # Ten predictors selected a priori for their relevance to household internet access,
-# entered in three blocks for the sequential models (Section 4.10)
+# entered in three blocks for the sequential models (manuscript Section 2.10)
 BLOCK_A = ["residence", "head_age", "head_sex", "head_education", "household_size"]
 BLOCK_B = ["head_employment", "monthly_expenditure", "electricity_source", "youth_vocational_training"]
 BLOCK_C = ["smartphone"]
