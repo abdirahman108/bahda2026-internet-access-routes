@@ -1,4 +1,4 @@
-"""Step 6: Check that your run reproduces 23 key numbers reported in the manuscript.
+"""Step 6: Check that your run reproduces 25 key numbers reported in the manuscript.
 
 Run this script after 2_run_analysis.py and 3_model_family.py. From the repository's main folder, run:
 
@@ -19,6 +19,7 @@ R = json.load(open(OUT / "results.json"))
 t3 = pd.read_csv(TAB / "table3_full_model_rrr.csv")
 ame = pd.read_csv(TAB / "table4_ame.csv")
 fam = pd.read_csv(TAB / "model_family" / "table5_model_family.csv").set_index("model")
+mc = {m["model"]: m for m in R["model_cmp"]}
 
 
 def rrr(term, outcome):
@@ -50,10 +51,12 @@ CHECKS = [
     ("AME no electricity on no access, points (Table 4)", 100 * me("electricity_source", "4", 0).ame, 21.6, 0.05),
     ("AME smartphone on no access, points (Table 4)", 100 * me("smartphone", "1", 0).ame, -23.6, 0.05),
     ("AME peri-urban on home Wi-Fi/fibre, points (Table 4)", 100 * me("residence", "2", 3).ame, -25.7, 0.05),
-    ("Unweighted multinomial logit log-likelihood (Table S5)", fam.loc["Multinomial logit", "ll"], -3194.513, 0.001),
-    ("Unweighted multinomial logit AIC (Table S5)", fam.loc["Multinomial logit", "aic"], 6565.026, 0.001),
-    ("Two-part nominal logit AIC (Table S5)", fam.loc["Two-part nominal logit", "aic"], 6568.035, 0.01),
-    ("Two-part nominal probit AIC (Table S5)", fam.loc["Two-part nominal probit", "aic"], 6566.869, 0.01),
+    ("Model 3 BIC, lowest BIC (Table 5)", mc["M3"]["bic"], 6548.488, 0.001),
+    ("Model 4 (15 predictors) AIC, lowest AIC (Table 5)", mc["M4"]["aic"], 5835.574, 0.001),
+    ("Unweighted multinomial logit log-likelihood (Table 5)", fam.loc["Multinomial logit", "ll"], -3194.513, 0.001),
+    ("Unweighted multinomial logit AIC (Table 5)", fam.loc["Multinomial logit", "aic"], 6565.026, 0.001),
+    ("Two-part nominal logit AIC (Table 5)", fam.loc["Two-part nominal logit", "aic"], 6568.035, 0.01),
+    ("Two-part nominal probit AIC (Table 5)", fam.loc["Two-part nominal probit", "aic"], 6566.869, 0.01),
 ]
 
 failed = 0

@@ -367,6 +367,10 @@ sens += keyrows(fit(BLOCK_A + BLOCK_B), "S4 Smartphone ownership removed (M2)")
 s5 = fit(PRIMARY + EXTRA)
 sens += keyrows(s5, "S5 Five further household ICT items added")
 R["s5_info"] = {k: (float(v) if isinstance(v, (float, np.floating)) else v) for k, v in s5.info().items()}
+# The 15-predictor model joins the AIC/BIC comparison as Model 4 (same 2,707 households)
+i = s5.info()
+cmp.append(dict(model="M4", k=i["k"], ll=i["ll"], aic=i["aic"], bic=i["bic"], r2_mcf=i["r2_mcf"],
+                converged=i["converged"], n_separated=int(s5.separated.sum())))
 sens += keyrows(fit(PRIMARY, data=sub.copy()), "S6 Top 1% influential households removed")
 d4 = df.copy()
 d4["y4"] = d4[OUTCOME].replace({4: 3})
@@ -407,7 +411,7 @@ R["no_smartphone_outcome"] = y[df.smartphone == 0].value_counts().sort_index().t
 # Model 2: all relative risk ratios without smartphone ownership
 fits["M2"].table().to_csv(TAB / "table_model2_rrr.csv", index=False)
 
-# Supplementary Table S6: compare every route with smartphone data instead
+# Supplementary Table S4: compare every route with smartphone data instead
 alt = fit(PRIMARY, base=1)
 alt.table().to_csv(TAB / "tableS3_alt_baseline_smartphone.csv", index=False)
 
@@ -439,6 +443,12 @@ for nm, sp in specs.items():
 mc = pd.DataFrame(mc)
 cmp = pd.DataFrame(cmp)
 cmp.to_csv(TAB / "table5_model_comparison_sequential.csv", index=False)
+# AIC and BIC side by side: difference from the best model on each criterion and which model each favours
+ic = cmp[["model", "k", "ll", "aic", "bic"]].copy()
+ic["delta_aic"] = ic.aic - ic.aic.min()
+ic["delta_bic"] = ic.bic - ic.bic.min()
+ic.to_csv(TAB / "table5_information_criteria.csv", index=False)
+R["ic_best"] = {"aic": ic.loc[ic.aic.idxmin(), "model"], "bic": ic.loc[ic.bic.idxmin(), "model"]}
 mc.to_csv(TAB / "table5_model_comparison_penalised.csv", index=False)
 R["model_cmp"] = cmp.to_dict("records")
 R["model_cmp_pen"] = mc.to_dict("records")

@@ -6,7 +6,7 @@ This repository contains the analysis code for the following manuscript:
 Household Survey*
 
 The code starts from the survey data file. It produces every table, figure, and number in the manuscript
-and its supplement. Its last step compares 23 key results with the values printed in the manuscript.
+and its supplement. Its last step compares 25 key results with the values printed in the manuscript.
 
 This guide is for reviewers and other researchers who want to check or reproduce the results. You don't
 need a background in statistics or programming to follow the steps in
@@ -80,10 +80,10 @@ The following tree shows the main files and folders:
 ├── scripts/                      The analysis, one numbered step per file.
 │   ├── 1_clean_data.do           Step 1 (Stata): turns the full survey file into the analysis file.
 │   ├── 2_run_analysis.py         Step 2: the main analysis, Tables 2 to 4, and the sensitivity analyses.
-│   ├── 3_model_family.py         Step 3: alternative models for comparison (Table S5).
+│   ├── 3_model_family.py         Step 3: alternative models for comparison (Table 5).
 │   ├── 4_excluded_households.py  Step 4: describes the 189 households left out (Table S1b).
 │   ├── 5_make_figures.py         Step 5: Figures 1 to 3 and Supplementary Figure S1.
-│   ├── 6_verify_outputs.py       Step 6: compares 23 results with the manuscript.
+│   ├── 6_verify_outputs.py       Step 6: compares 25 results with the manuscript.
 │   ├── stata_analysis.do         Optional: runs steps 2 and 3 in Stata, so you can compare.
 │   └── _paths.py                 Lets the scripts find the shared code in lib/.
 ├── lib/                          Code that the scripts share.
@@ -148,7 +148,7 @@ The analysis runs in six steps. Each step is one file in the `scripts/` folder.
      match the Atlas totals for all 2,896 households. Sensitivity analysis S12 in step 2 uses these
      adjusted weights.
 5. **Draw the figures** (`5_make_figures.py`). Draws Figures 1 to 3 and Supplementary Figure S1.
-6. **Check the results** (`6_verify_outputs.py`). Compares 23 key results with the values printed in
+6. **Check the results** (`6_verify_outputs.py`). Compares 25 key results with the values printed in
    the manuscript, allowing for rounding.
 
 ## Reproduce the results
@@ -218,7 +218,7 @@ From the repository's main folder, run the following command:
 bash run_all.sh
 ```
 
-When the run finishes, the last line reads `23 of 23 checks passed`.
+When the run finishes, the last line reads `25 of 25 checks passed`.
 
 To run the steps one at a time instead, run the following commands in this order:
 
@@ -233,7 +233,7 @@ python3 scripts/6_verify_outputs.py
 ### Results that can vary slightly
 
 If you use other package versions, your results still match the manuscript to the decimal places it
-reports. The one exception is the lasso and elastic-net models in Table S5. These models use a random
+reports. The one exception is the lasso and elastic-net models in Table 5. These models use a random
 starting point, so the third decimal place of their results can vary between runs and computers.
 
 ## Find the source of each result
@@ -252,15 +252,15 @@ it. File paths are relative to the `outputs/` folder.
 | Model 2 (the main model without smartphone ownership) | `tables/table_model2_rrr.csv` | `2_run_analysis.py` |
 | Table 4 (percentage-point differences) | `tables/table4_ame.csv` | `2_run_analysis.py` |
 | Figure 3 (predicted percentages) | `tables/adjusted_predictions.csv`, `figures/Figure3_adjusted_predictions.png` | `2_run_analysis.py`, `5_make_figures.py` |
+| Table 5 (AIC and BIC model comparison) | `tables/table5_information_criteria.csv` (Models 1 to 4, with the gap to the best value on each criterion), `tables/table5_model_comparison_sequential.csv`, `tables/table5_model_comparison_penalised.csv`, `tables/model_family/table5_model_family.csv`, and the `ic_best` entry in `results.json` | `2_run_analysis.py`, `3_model_family.py` |
+| Table 6 (overlap between predictors, and the checklist) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv`, `results.json` | `2_run_analysis.py` |
 | Model checks (Section 3.7) | The `nonlinearity`, `iia`, `kish_deff`, `kish_neff`, and `events_per_parameter` entries in `results.json`; `tables/sparse_cells.csv`; `tables/diag_iia_hausman.csv` | `2_run_analysis.py` |
 | Table S1 (missing answers) | The log that `1_clean_data.do` prints | `1_clean_data.do` |
 | Table S1b (households left out compared with those included) | `tables/tableS1b_excluded_vs_included.csv`, `tables/tableS1b_tests.csv`, `excluded_profile.json` | `4_excluded_households.py` |
 | Table S2 (sensitivity analyses S0 to S12) | `tables/tableS2_sensitivity.csv` | `2_run_analysis.py` |
 | Table S3 (each predictor on its own) | `tables/table_crude_rrr.csv` | `2_run_analysis.py` |
-| Table S4 (overlap between predictors, and the checklist) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv`, `results.json` | `2_run_analysis.py` |
-| Table S5 (model comparison) | `tables/table5_model_comparison_sequential.csv`, `tables/table5_model_comparison_penalised.csv`, `tables/model_family/table5_model_family.csv` | `2_run_analysis.py`, `3_model_family.py` |
-| Table S6 (smartphone data as the comparison route) | `tables/tableS3_alt_baseline_smartphone.csv` | `2_run_analysis.py` |
-| Table S7 (actual compared with predicted route) | `tables/classification_unweighted.csv` | `2_run_analysis.py` |
+| Table S4 (smartphone data as the comparison route) | `tables/tableS3_alt_baseline_smartphone.csv` | `2_run_analysis.py` |
+| Table S5 (actual compared with predicted route) | `tables/classification_unweighted.csv` | `2_run_analysis.py` |
 | Supplementary Figure S1 (percentage-point differences) | `figures/FigureS1_average_marginal_effects.png` | `5_make_figures.py` |
 
 ### Read the CSV files
@@ -347,7 +347,7 @@ no peri-urban household used public Wi-Fi.
 |---|---|
 | The message `Missing data/borama_internet_access.dta` appears. | Put the data file in the `data/` folder. See [About the data](#about-the-data). |
 | `1_clean_data.do` stops at an `assert` line. | Your survey file isn't the version used for the manuscript. Ask the data custodian which version you have. |
-| A lasso or elastic-net value in Table S5 differs in the third decimal place. | This is expected, because these models use a random starting point. The 23 checks still pass. |
+| A lasso or elastic-net value in Table 5 differs in the third decimal place. | This is expected, because these models use a random starting point. The 25 checks still pass. |
 | `6_verify_outputs.py` reports `FAIL` for any other value. | Check that your package versions match `requirements.txt`, and that the data file has 2,707 rows. |
 
 ## Glossary
