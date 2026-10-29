@@ -1,19 +1,20 @@
 version 16.0
 set more off
-* Ways households access the internet in Borama District (BAHDA-2026): Stata version of the analysis
-* Stata equivalent of 2_run_analysis.py (primary analysis) and 3_model_family.py.
-* Run from the repository root after scripts/1_clean_data.do:  do scripts/stata_analysis.do
-* Predictors: ten household and household-head characteristics selected a
-* priori for their relevance to internet access.
+* Optional: Run the main analysis in Stata, to check the Python results.
+* This script repeats the main parts of 2_run_analysis.py and 3_model_family.py.
+*
+* Before you run it, make sure that data/borama_internet_access.dta exists. Then open Stata in the
+* repository's main folder and run:
+*     do scripts/stata_analysis.do
 use "data/borama_internet_access.dta", clear
 
-* Survey design: normalised weight, six strata, households as PSUs
+* Survey design: scaled weight, six strata, and each household as its own sampling unit
 svyset record_id [pw = survey_weight], strata(sampling_stratum) vce(linearized)
 
 gen head_age10 = head_age / 10
 label variable head_age10 "Age of household head (per 10 years)"
 
-* Descriptives (weighted %, 95% CI) and Rao-Scott second-order F tests
+* Describe the households (weighted %, 95% CI) and test each predictor with the Rao-Scott F test
 svy: tabulate DV_internet_access_mode, percent ci
 foreach v in residence head_sex head_education head_employment monthly_expenditure ///
     electricity_source smartphone youth_vocational_training {
@@ -25,12 +26,12 @@ foreach v in head_age household_size {
     testparm i.DV_internet_access_mode
 }
 
-* Reference categories as in Table 1 (sex: male = 2 is the base)
+* Comparison groups as in Table 1 (for sex, male = 2 is the comparison group)
 local A i.residence head_age10 ib2.head_sex ib1.head_education household_size
 local B i.head_employment i.monthly_expenditure i.electricity_source i.youth_vocational_training
 local C i.smartphone
 
-* Sequential models; Model 3 is the primary model (base outcome = no internet access)
+* Models 1 to 3, each adding predictors. Model 3 is the main model. Each route is compared with no internet access.
 svy: mlogit DV_internet_access_mode `A', baseoutcome(0) rrr
 svy: mlogit DV_internet_access_mode `A' `B', baseoutcome(0) rrr
 svy: mlogit DV_internet_access_mode `A' `B' `C', baseoutcome(0) rrr
@@ -40,32 +41,32 @@ foreach v in residence head_sex head_education head_employment monthly_expenditu
 }
 testparm head_age10
 testparm household_size
-* Peri-urban x public Wi-Fi is an empty cell: Stata will report the parameter as
-* omitted or with an extreme estimate (quasi-separation), as in the paper.
+* No peri-urban household used public Wi-Fi, so Stata reports that result as omitted or very large.
+* The Python code marks it as not estimable. Both mean the same thing.
 
-* Average marginal effects (percentage points = x100) and adjusted predictions
+* Percentage-point differences (multiply by 100) and predicted percentages
 margins, dydx(i.residence i.head_sex ib1.head_education i.head_employment i.monthly_expenditure ///
     i.electricity_source i.youth_vocational_training i.smartphone)
 margins residence monthly_expenditure electricity_source smartphone
 
-* Sensitivity S1: urban sub-zone clusters as PSUs
+* Sensitivity analysis S1: urban sub-zones as the sampling units
 gen str40 psu_cluster = cond(sampling_stratum <= 4 & trim(sub_zone) != "", ///
     "C_" + sub_zone, "H_" + string(record_id, "%15.0f"))
 svyset psu_cluster [pw = survey_weight], strata(sampling_stratum)
 svy: mlogit DV_internet_access_mode `A' `B' `C', baseoutcome(0) rrr
 svyset record_id [pw = survey_weight], strata(sampling_stratum) vce(linearized)
 
-* Sensitivity S5: five further household ICT items added
+* Sensitivity analysis S5: add five extra questions about household technology
 svy: mlogit DV_internet_access_mode `A' `B' `C' i.head_marital_status i.primary_income_source ///
     i.basic_mobile i.computer_tablet i.head_digital_literacy, baseoutcome(0) rrr
 
-* Unweighted model family (Supplementary Table S5); raw age, lowest code as reference
+* Models without weights (Supplementary Table S5): age in years, lowest code as the comparison group
 local X i.residence i.head_sex ib1.head_education i.monthly_expenditure i.smartphone ///
     i.electricity_source i.head_employment i.youth_vocational_training c.head_age c.household_size
 mlogit DV_internet_access_mode `X', baseoutcome(0)
 estat ic
 mlogit DV_internet_access_mode `X', baseoutcome(1)
-* two-part nominal models: part 1 home Wi-Fi/fibre vs any other route, part 2 among the rest
+* Two-part models: part 1 separates home Wi-Fi or fibre from the other routes; part 2 models the rest
 gen byte homewifi = DV_internet_access_mode == 3
 logit homewifi `X'
 scalar ll_logit = e(ll)

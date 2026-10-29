@@ -1,11 +1,22 @@
-"""Survey-weighted analysis of the ways households access the internet in Borama District.
+"""Step 2: Run the main analysis of how households in Borama District access the internet.
 
-Survey-weighted analysis of the ten selected predictors: descriptives, outcome-scale scan, design-based
-bivariate screening, multicollinearity, sequential multinomial models,
-average marginal effects, diagnostics and sensitivity analyses.
-The unweighted model family is in 3_model_family.py.
+This script uses the survey weights throughout. It does the following, in order:
 
-Run:  python3 scripts/2_run_analysis.py      (from the repository root)
+1. Describes the 2,707 households and how many use each route to the internet.
+2. Builds Table 2 and tests how each predictor relates to the route.
+3. Checks that no two predictors measure the same thing.
+4. Fits three models, each adding a group of predictors (Table 3).
+5. Converts the main model into percentage-point differences and predicted percentages (Table 4,
+   Figure 3).
+6. Runs model checks and the sensitivity analyses S1 to S12 (Supplementary Table S2).
+
+The models without survey weights are in 3_model_family.py.
+
+To run this script, from the repository's main folder, run:
+
+    python3 scripts/2_run_analysis.py
+
+The results are saved in the outputs/ folder.
 """
 import json
 import warnings
@@ -42,7 +53,7 @@ def lab(var, lv):
 
 
 # ---------------------------------------------------------------------------
-# 1. Analytical sample
+# 1. The 2,707 households in the analysis
 # ---------------------------------------------------------------------------
 R["n"] = int(len(df))
 R["sum_w"] = float(W.sum())
@@ -54,7 +65,7 @@ R["n_urban_clusters"] = int(df.loc[df.psu_cluster.str.startswith("C_"), "psu_clu
 assert df["record_id"].is_unique
 
 # ---------------------------------------------------------------------------
-# 2. Outcome distribution, overall and by residence
+# 2. How many households use each route, overall and by area
 # ---------------------------------------------------------------------------
 op = svy_prop(y, W, H, PSU, LEVELS)
 op["label"] = op.level.map(OUT_LABELS)
@@ -77,7 +88,7 @@ R["outcome_by_residence"] = {int(r): g.set_index("level")[["n", "p", "lo", "hi"]
                              for r, g in byres.groupby("residence")}
 
 # ---------------------------------------------------------------------------
-# 3. Table 2: sample characteristics + bivariate (weighted row %), Rao-Scott
+# 3. Table 2: household characteristics by route (weighted row %), with Rao-Scott tests
 # ---------------------------------------------------------------------------
 rows = []
 biv = []
@@ -116,7 +127,7 @@ R["bivariate"] = biv.set_index("variable")[["stat", "df1", "df2", "p", "deff"]].
 R["table2"] = t2.to_dict("records")
 
 # ---------------------------------------------------------------------------
-# 4. Outcome-scale scan and sparse-cell check
+# 4. Check the outcome categories and find combinations with very few households
 # ---------------------------------------------------------------------------
 scan = dict(n_categories=5, largest_share_unweighted=float(y.value_counts(normalize=True).max()),
             smallest_category_n=int(y.value_counts().min()))
@@ -134,7 +145,7 @@ sparse.to_csv(TAB / "sparse_cells.csv", index=False)
 R["sparse_cells"] = sparse.to_dict("records")
 
 # ---------------------------------------------------------------------------
-# 5. Multicollinearity: generalised VIF per predictor and VIF per indicator
+# 5. Check that no two predictors overlap too much (variance inflation factors)
 # ---------------------------------------------------------------------------
 Xall = design(df, PRIMARY)
 Rm = np.corrcoef(Xall.to_numpy().T)
@@ -165,7 +176,7 @@ R["vif_max"] = float(vsum.max_vif.max())
 
 
 # ---------------------------------------------------------------------------
-# 6. Sequential survey-weighted multinomial models (base = No internet access)
+# 6. Fit Models 1 to 3, each adding predictors; every route is compared with no internet access
 # ---------------------------------------------------------------------------
 def fit(preds, data=df, psu="psu_hh", weight="survey_weight", base=0, ridge=0.0, outcome=OUTCOME, drop=()):
     X = design(data, preds).drop(columns=list(drop))
@@ -190,7 +201,7 @@ tab3.to_csv(TAB / "table3_full_model_rrr.csv", index=False)
 R["full_info"] = {k: (float(v) if isinstance(v, (float, np.floating)) else v) for k, v in full.info().items()}
 R["separated_terms"] = tab3.loc[tab3.separated, ["outcome", "term"]].to_dict("records")
 
-# joint Wald tests per predictor in the full model
+# Test each predictor as a whole in the main model
 jw = []
 for name in PRIMARY:
     cs = [c for c in full.names if c == name or c.startswith(name + "=")]
@@ -200,7 +211,7 @@ jw = pd.DataFrame(jw)
 jw.to_csv(TAB / "table3_joint_wald.csv", index=False)
 R["joint_wald"] = jw.set_index("variable").to_dict("index")
 
-# crude (single-predictor) RRRs
+# Relative risk ratios for each predictor on its own (Supplementary Table S3)
 crude = []
 for name in PRIMARY:
     m = fit([name])
@@ -211,7 +222,7 @@ for name in PRIMARY:
 crude = pd.concat(crude)
 crude.to_csv(TAB / "table_crude_rrr.csv", index=False)
 
-# classification check
+# Compare each household's predicted route with its actual route
 P = full.predict()
 pred = np.array(LEVELS)[P.argmax(1)]
 wn = W / W.sum()
@@ -220,12 +231,12 @@ cm.to_csv(TAB / "classification_unweighted.csv")
 R["accuracy_unweighted"] = float((pred == y.values).mean())
 R["accuracy_weighted"] = float((wn * (pred == y.values)).sum())
 R["null_accuracy_weighted"] = float(max((wn * (y.values == l)).sum() for l in LEVELS))
-# calibration: weighted mean predicted vs observed by outcome
+# Compare the average predicted share of each route with the actual share
 R["calibration"] = {int(l): dict(obs=float((wn * (y.values == l)).sum()), pred=float((wn * P[:, i]).sum()))
                     for i, l in enumerate(LEVELS)}
 
 # ---------------------------------------------------------------------------
-# 7. Average adjusted predictions and AMEs
+# 7. Predicted percentages and percentage-point differences (AMEs)
 # ---------------------------------------------------------------------------
 def setter(var, lv, levels, ref):
     def f(X):
@@ -254,7 +265,7 @@ for name, label, ref, levels in CATS:
             ame_rows.append(dict(variable=name, label=label, level=l, level_label=lab(name, l), ref=ref,
                                  ref_label=lab(name, ref), outcome=int(r.level), ame=r.ame, lo=r.lo, hi=r.hi,
                                  p=r.p))
-# continuous: +10 years of age, +1 household member (finite-difference AME)
+# For age and household size, compare +10 years of age and +1 household member
 for name, label, scale in CONTS:
     def plus(X, name=name):
         X[name] = X[name] + 1.0
@@ -273,9 +284,9 @@ R["ame"] = ame.to_dict("records")
 R["pp"] = pp.to_dict("records")
 
 # ---------------------------------------------------------------------------
-# 8. Diagnostics: functional form, IIA, influence
+# 8. Model checks: straight-line effects, IIA, and influential households
 # ---------------------------------------------------------------------------
-# (a) Linearity in the logit for age and household size: add squared terms
+# (a) Check that age and household size have straight-line effects by adding squared terms
 d2 = df.copy()
 Xq = design(d2, PRIMARY)
 Xq["head_age_sq"] = (d2.head_age / 10) ** 2
@@ -318,7 +329,7 @@ iia = pd.DataFrame(iia)
 iia.to_csv(TAB / "diag_iia_hausman.csv", index=False)
 R["iia"] = iia.to_dict("records")
 
-# (c) Influence: refit without the 1% of households with the largest weighted score norm
+# (c) Refit the model without the 1% of households that influence the results most
 infl = np.sqrt((full.scores ** 2).sum(1))
 cut = np.quantile(infl, 0.99)
 sub = df[infl < cut]
@@ -349,7 +360,7 @@ sens += keyrows(full, "S0 Primary: survey-weighted, strata, household PSU")
 sens += keyrows(fit(PRIMARY, psu="psu_cluster"), "S1 Urban sub-zone clusters as PSU")
 df["_one"] = 1.0
 sens += keyrows(fit(PRIMARY, weight="_one"), "S2 Unweighted")
-# complete-case alternative: drop the households whose education was not reported
+# S3: leave out the households whose education was not reported
 sens += keyrows(fit(PRIMARY, data=df[df.head_education != 0].copy(), drop=["head_education=0"]),
                 "S3 Education not reported: households dropped")
 sens += keyrows(fit(BLOCK_A + BLOCK_B), "S4 Smartphone ownership removed (M2)")
@@ -361,19 +372,19 @@ d4 = df.copy()
 d4["y4"] = d4[OUTCOME].replace({4: 3})
 sens += keyrows(fit(PRIMARY, data=d4, outcome="y4"), "S7 Public Wi-Fi merged with Home Wi-Fi (4 categories)")
 sens += keyrows(fit(PRIMARY, ridge=1.0), "S8 Ridge-penalised (lambda = 1)")
-# alternative choice sets, probing IIA where substitution is most plausible
+# S9 and S10: change the set of routes, to check the IIA assumption where it is most likely to fail
 d9 = df[df[OUTCOME] != 4].copy()
 sens += keyrows(fit(PRIMARY, data=d9), "S9 Public Wi-Fi/cyber café category dropped")
 d10 = df.copy()
 d10["y10"] = d10[OUTCOME].replace({2: 1})
 sens += keyrows(fit(PRIMARY, data=d10, outcome="y10"), "S10 Smartphone and feature-phone data merged")
-# peri-urban stratum weight capped at 3 and all weights renormalised to the sample size
+# S11: cap the peri-urban weight at 3, then rescale all weights to add up to the sample size
 d11 = df.copy()
 d11["w_trim"] = d11.survey_weight.clip(upper=3.0)
 d11["w_trim"] *= len(d11) / d11.w_trim.sum()
 sens += keyrows(fit(PRIMARY, data=d11, weight="w_trim"), "S11 Weights capped at 3 and renormalised")
-# weights raked to the full-sample (N = 2,896) margins of stratum, outcome, employment and electricity,
-# which stand in for the 189 households excluded for expenditure "Prefer not to say"
+# S12: adjust the weights to match the Atlas totals for all 2,896 households (stratum, route,
+# employment, and electricity), to stand in for the 189 households left out
 d12 = df.copy()
 d12["w_cal"] = calibrated_weights(d12)
 sens += keyrows(fit(PRIMARY, data=d12, weight="w_cal"), "S12 Weights calibrated to full-sample margins")
@@ -383,25 +394,25 @@ sens.to_csv(TAB / "tableS2_sensitivity.csv", index=False)
 R["sensitivity"] = sens.to_dict("records")
 R["n_edu_none"] = int((df.head_education == 0).sum())
 
-# Kish design effect from unequal weighting and effective sample size
+# Effective sample size: how many equally weighted households the weighted sample is worth
 R["kish_deff"] = float(len(W) * (W ** 2).sum() / W.sum() ** 2)
 R["kish_neff"] = float(W.sum() ** 2 / (W ** 2).sum())
 R["weight_share_by_stratum"] = (df.groupby("sampling_stratum").survey_weight.sum() / W.sum()).round(4).to_dict()
-# events per parameter in each equation of the primary model
+# Households per estimated parameter for each route in the main model
 kpar = full.X.shape[1]
 R["events_per_parameter"] = {int(l): dict(n=int((y == l).sum()), k=int(kpar), epp=float((y == l).sum() / kpar))
                              for l in LEVELS[1:]}
-# outcome distribution among households without a smartphone (shared devices)
+# Routes used by households without a smartphone (they may share a device)
 R["no_smartphone_outcome"] = y[df.smartphone == 0].value_counts().sort_index().to_dict()
-# full RRR table for the reduced model without smartphone ownership (Model 2)
+# Model 2: all relative risk ratios without smartphone ownership
 fits["M2"].table().to_csv(TAB / "table_model2_rrr.csv", index=False)
 
-# alternative baseline: smartphone data as base
+# Supplementary Table S6: compare every route with smartphone data instead
 alt = fit(PRIMARY, base=1)
 alt.table().to_csv(TAB / "tableS3_alt_baseline_smartphone.csv", index=False)
 
 # ---------------------------------------------------------------------------
-# 10. Survey-weighted penalised multinomial models (cross-validated)
+# 10. Penalised models with survey weights, tuned by cross-validation
 # ---------------------------------------------------------------------------
 Xs = design(df, PRIMARY).to_numpy()
 mu_, sd_ = Xs.mean(0), Xs.std(0)

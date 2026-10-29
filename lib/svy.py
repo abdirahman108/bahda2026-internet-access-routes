@@ -1,9 +1,10 @@
-"""Design-based estimation helpers for the BAHDA-2026 household internet-access analysis.
+"""Survey statistics that account for the survey weights and strata.
 
-Implements the estimators that Stata's `svy:` prefix uses with a stratified
-design (Taylor-series linearisation, with-replacement PSU variance within
-strata), so that results can be reproduced with
-`svyset psu [pw=survey_weight], strata(sampling_stratum)` in Stata.
+This module gives the same estimates and confidence intervals as Stata's `svy:` commands for a
+stratified survey. It uses Taylor-series linearisation, with sampling units treated as drawn with
+replacement within each stratum. You can reproduce its results in Stata with this setup:
+
+    svyset psu [pw=survey_weight], strata(sampling_stratum)
 """
 import numpy as np
 import pandas as pd

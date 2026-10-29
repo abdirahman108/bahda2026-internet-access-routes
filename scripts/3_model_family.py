@@ -1,20 +1,23 @@
-"""Unweighted model family for the nominal outcome (Supplementary Table S5).
+"""Step 3: Fit alternative models for comparison (Supplementary Table S5).
 
-Fits, on the ten selected predictors (age and household size in raw
-units, lowest code of each categorical predictor as reference):
-  1. multinomial logit (maximum likelihood)
-  2-4. ridge, lasso and elastic-net multinomial logit (10-fold CV deviance)
-  5. baseline-category logit with an alternative baseline (smartphone data)
-  6-7. two-part nominal logit / probit: part 1 = home Wi-Fi/fibre vs any other
-       outcome (logit or probit), part 2 = multinomial logit among the rest
-It also writes the outcome-scale scan, unweighted bivariate screening
-(Pearson chi-square, one-way ANOVA), indicator-level VIF, the multinomial
-coefficient table and average predicted contrasts.
+These models don't use the survey weights. They exist only so that you can compare how well other
+model types fit. The results in the manuscript come from the weighted model in
+2_run_analysis.py.
 
-These unweighted fits are a comparison set only; inference in the paper uses
-the survey-weighted model in 2_run_analysis.py.
+All models use the ten predictors. Age and household size are in their original units, and each
+categorical predictor is compared with its lowest code. The script fits these models:
 
-Run:  python3 scripts/3_model_family.py      (from the repository root)
+1. A standard multinomial logistic regression.
+2. Ridge, lasso, and elastic-net versions, tuned by 10-fold cross-validation.
+3. The same model, with smartphone data as the comparison route.
+4. Two-part logit and probit models. Part 1 separates home Wi-Fi or fibre from the other routes,
+   and part 2 models the other routes.
+
+It also saves unweighted versions of the descriptive tables and checks.
+
+To run this script, from the repository's main folder, run:
+
+    python3 scripts/3_model_family.py
 """
 import json
 import warnings
@@ -108,8 +111,8 @@ fam = []
 mlog = SvyMlogit(y, X, one, H, PSU).fit()
 fam.append(dict(model="Multinomial logit", **ic(mlog.ll, mlog.k)))
 
-# penalised multinomial models: standardised predictors, 10-fold CV over a
-# penalty grid, multinomial deviance (2 x mean log-loss) at the best penalty
+# Penalised models: scale the predictors, try a range of penalties with 10-fold cross-validation,
+# and report the deviance (2 x mean log-loss) at the best penalty
 Xz = (A - A.mean(0)) / A.std(0)
 skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=2026)
 grid = np.logspace(-3, 2, 15)
@@ -129,7 +132,7 @@ for nm, sp in [("Ridge multinomial", dict(penalty="l2", solver="lbfgs")),
 alt = SvyMlogit(y, X, one, H, PSU, base=1).fit()
 fam.append(dict(model="Baseline-category logit, alternative baseline (smartphone data)", **ic(alt.ll, alt.k)))
 
-# two-part nominal models with home Wi-Fi/fibre (largest category) as part-1 split
+# Two-part models: part 1 separates home Wi-Fi or fibre from all other routes
 Xc = sm.add_constant(X)
 z = (y == 3).astype(int)
 rest = y != 3

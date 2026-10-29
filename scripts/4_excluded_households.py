@@ -1,12 +1,20 @@
-"""Profile of the 189 households excluded for expenditure "Prefer not to say".
+"""Step 4: Describe the 189 households left out because they chose "Prefer not to say" about spending.
 
-The analytical extract holds only the 2,707 complete records. The BAHDA-2026 Atlas publishes
-full-sample (N = 2,896) unweighted and weighted counts for every item used here, so the excluded
-households' distribution is the Atlas count minus the extract count. Unweighted counts are exact;
-weighted counts carry the Atlas's rounding to 0.1. Because the weight is constant within stratum,
-the excluded households' weights follow from their stratum counts.
+The analysis file contains only the 2,707 households with complete answers. The BAHDA-2026 Atlas
+publishes counts for all 2,896 households, with and without weights, for every question used here.
+So, for each answer, the number of left-out households is the Atlas count minus the analysis file's
+count.
 
-Run:  python3 scripts/4_excluded_households.py      (from the repository root)
+- Counts without weights are exact.
+- Weighted counts carry the Atlas's rounding to one decimal place.
+- Every household in a stratum has the same weight, so the left-out households' weights follow from
+  how many of them are in each stratum.
+
+The script saves Supplementary Table S1b and outputs/excluded_profile.json.
+
+To run this script, from the repository's main folder, run:
+
+    python3 scripts/4_excluded_households.py
 """
 import json
 
@@ -35,7 +43,7 @@ def main():
     W = df["survey_weight"]
     rows, tests = [], []
 
-    # stratum: excluded counts, and the stratum weight each excluded household carries
+    # Left-out households in each stratum, and the weight that each of them carries
     inc_s = df.groupby("sampling_stratum").size()
     w_s = df.groupby("sampling_stratum")["survey_weight"].first()
     exc_s = pd.Series(ATLAS_STRATUM) - inc_s
@@ -69,7 +77,7 @@ def main():
         chi = stats.chi2_contingency(ct)
         tests.append(dict(variable=var, source=table, chi2=chi[0], df=chi[2], p=chi[1]))
 
-    # continuous: excluded mean from the full-sample and extract means
+    # Age and household size: work out the left-out households' average from the two published averages
     for var, (mu_u, mu_w) in ATLAS_MEANS.items():
         exc_mean = (N_FULL * mu_u - len(df) * df[var].mean()) / N_EXC
         wsum_exc = float((exc_s * w_s).sum())
