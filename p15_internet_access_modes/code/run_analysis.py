@@ -19,6 +19,7 @@ from sklearn.metrics import log_loss, accuracy_score
 
 from setup_data import (load, design, OUTCOME, OUT_LABELS, OUT_SHORT, CATS, CONTS, BLOCK_A, BLOCK_B,
                         BLOCK_C, PRIMARY, EXTRA, OUT)
+from excluded_vs_included import calibrated_weights
 from svy import (SvyMlogit, svy_prop, svy_mean, rao_scott, svy_anova, svychisq_f, margins, contrast,
                  level_ci, design_df)
 
@@ -370,6 +371,12 @@ d11 = df.copy()
 d11["w_trim"] = d11.survey_weight.clip(upper=3.0)
 d11["w_trim"] *= len(d11) / d11.w_trim.sum()
 sens += keyrows(fit(PRIMARY, data=d11, weight="w_trim"), "S11 Weights capped at 3 and renormalised")
+# weights raked to the full-sample (N = 2,896) margins of stratum, outcome, employment and electricity,
+# which stand in for the 189 households excluded for expenditure "Prefer not to say"
+d12 = df.copy()
+d12["w_cal"] = calibrated_weights(d12)
+sens += keyrows(fit(PRIMARY, data=d12, weight="w_cal"), "S12 Weights calibrated to full-sample margins")
+R["calibrated_weight_range"] = [float(d12.w_cal.min()), float(d12.w_cal.max())]
 sens = pd.DataFrame(sens)
 sens.to_csv(TAB / "tableS2_sensitivity.csv", index=False)
 R["sensitivity"] = sens.to_dict("records")

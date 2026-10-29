@@ -77,7 +77,7 @@ panels = [("residence", "A. Residence", ["Urban", "Peri-urban", "Rural"]),
           ("monthly_expenditure", "B. Monthly expenditure (USD)", ["<100", "100–299", "300–599", "600–999", "≥1000"]),
           ("electricity_source", "C. Electricity source", ["Grid", "Solar", "Generator", "None"]),
           ("smartphone", "D. Household owns a smartphone", ["No", "Yes"])]
-fig, axes = plt.subplots(2, 2, figsize=(7.0, 6.0), sharey=True)
+fig, axes = plt.subplots(2, 2, figsize=(7.0, 4.3), sharey=True)
 for ax, (var, title, ticks) in zip(axes.ravel(), panels):
     s = pp[pp.variable == var]
     lvls = sorted(s.level.unique())
@@ -94,8 +94,7 @@ for ax, (var, title, ticks) in zip(axes.ravel(), panels):
     ax.set_title(title, loc="left", fontsize=9.5, color=INK)
     ax.yaxis.grid(True, color=GRID, lw=0.6)
     ax.set_axisbelow(True)
-for ax in axes[:, 0]:
-    ax.set_ylabel("Adjusted predicted probability (%)")
+fig.supylabel("Adjusted predicted probability (%)", fontsize=9)
 h, l = axes[0, 0].get_legend_handles_labels()
 fig.legend(h, l, ncol=5, frameon=False, fontsize=7.6, loc="upper center", bbox_to_anchor=(0.5, 1.02))
 fig.tight_layout(rect=(0, 0, 1, 0.96))
