@@ -33,15 +33,15 @@ CATS = [
 CONTS = [("head_age", "Age of household head (years)", 10.0),
          ("household_size", "Household size (members)", 1.0)]
 
-# Predictors follow the BAHDA-2026 ICT title and variable alignment sheet (IV1-IV10),
+# Ten predictors selected a priori for their relevance to household internet access,
 # entered in three blocks for the sequential models (Section 4.10)
 BLOCK_A = ["residence", "head_age", "head_sex", "head_education", "household_size"]
 BLOCK_B = ["head_employment", "monthly_expenditure", "electricity_source", "youth_vocational_training"]
 BLOCK_C = ["smartphone"]
 PRIMARY = BLOCK_A + BLOCK_B + BLOCK_C
-ALIGN10 = ["residence", "head_age", "head_sex", "head_education", "monthly_expenditure", "smartphone",
+SELECTED10 = ["residence", "head_age", "head_sex", "head_education", "monthly_expenditure", "smartphone",
            "electricity_source", "household_size", "head_employment", "youth_vocational_training"]
-assert sorted(PRIMARY) == sorted(ALIGN10)
+assert sorted(PRIMARY) == sorted(SELECTED10)
 # further household ICT items kept in the cleaned file, used only in a sensitivity model
 EXTRA = ["head_marital_status", "primary_income_source", "basic_mobile", "computer_tablet",
          "head_digital_literacy"]

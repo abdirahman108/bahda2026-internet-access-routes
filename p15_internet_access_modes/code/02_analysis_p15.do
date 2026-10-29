@@ -3,8 +3,8 @@ set more off
 * Paper 15: Ways households access the internet in Borama District (BAHDA-2026)
 * Stata equivalent of run_analysis.py (primary analysis) and model_family.py.
 * Run from the repository folder p15_internet_access_modes after 01_clean_p15.do.
-* Predictors: the ten variables of the BAHDA-2026 ICT title and variable
-* alignment sheet (IV1-IV10).
+* Predictors: ten household and household-head characteristics selected a
+* priori for their relevance to internet access.
 use "data/p15_internet_access_modes_clean.dta", clear
 
 * Survey design: normalised weight, six strata, households as PSUs
