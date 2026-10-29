@@ -1,4 +1,4 @@
-"""Design-based estimation helpers for BAHDA-2026 Paper 15.
+"""Design-based estimation helpers for the BAHDA-2026 household internet-access analysis.
 
 Implements the estimators that Stata's `svy:` prefix uses with a stratified
 design (Taylor-series linearisation, with-replacement PSU variance within

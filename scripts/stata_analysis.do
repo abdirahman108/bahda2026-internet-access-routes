@@ -1,11 +1,11 @@
 version 16.0
 set more off
-* Paper 15: Ways households access the internet in Borama District (BAHDA-2026)
-* Stata equivalent of run_analysis.py (primary analysis) and model_family.py.
-* Run from the repository folder p15_internet_access_modes after 01_clean_p15.do.
+* Ways households access the internet in Borama District (BAHDA-2026): Stata version of the analysis
+* Stata equivalent of 2_run_analysis.py (primary analysis) and 3_model_family.py.
+* Run from the repository root after scripts/1_clean_data.do:  do scripts/stata_analysis.do
 * Predictors: ten household and household-head characteristics selected a
 * priori for their relevance to internet access.
-use "data/p15_internet_access_modes_clean.dta", clear
+use "data/borama_internet_access.dta", clear
 
 * Survey design: normalised weight, six strata, households as PSUs
 svyset record_id [pw = survey_weight], strata(sampling_stratum) vce(linearized)

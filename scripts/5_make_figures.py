@@ -1,4 +1,4 @@
-"""Publication figures for Paper 15 (run after run_analysis.py)."""
+"""Publication figures (run after 2_run_analysis.py and 3_model_family.py)."""
 import json
 
 import matplotlib
@@ -8,7 +8,8 @@ from matplotlib.patches import FancyBboxPatch
 import numpy as np
 import pandas as pd
 
-from setup_data import OUT, OUT_SHORT
+import _paths  # noqa: F401  (puts lib/ on the import path)
+from variables import OUT, OUT_SHORT
 
 FIG = OUT / "figures"
 FIG.mkdir(parents=True, exist_ok=True)
@@ -101,7 +102,7 @@ fig.tight_layout(rect=(0, 0, 1, 0.96))
 fig.savefig(FIG / "Figure3_adjusted_predictions.png", bbox_inches="tight")
 plt.close(fig)
 
-# ---------------------------------------------------------------- Figure 4
+# ---------------------------------------------------------------- Supplementary Figure S1
 ame = pd.read_csv(TAB / "table4_ame.csv")
 sel = [("residence", "2", "Peri-urban vs urban"), ("residence", "3", "Rural vs urban"),
        ("monthly_expenditure", "3", "US$300–599 vs <100"), ("monthly_expenditure", "5", "US$≥1000 vs <100"),
@@ -127,6 +128,6 @@ axes[0].set_yticks(yy)
 axes[0].set_yticklabels(ylab, fontsize=7.8)
 fig.supxlabel("Average marginal effect (percentage points, 95% CI)", fontsize=8.5)
 fig.tight_layout()
-fig.savefig(FIG / "Figure4_average_marginal_effects.png", bbox_inches="tight")
+fig.savefig(FIG / "FigureS1_average_marginal_effects.png", bbox_inches="tight")
 plt.close(fig)
 print("figures written")

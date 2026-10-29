@@ -1,6 +1,6 @@
-"""Check that a fresh run reproduces the key numbers reported in the Paper 15 manuscript.
+"""Check that a fresh run reproduces the key numbers reported in the manuscript.
 
-Run after run_analysis.py and model_family.py:  python3 verify_outputs.py
+Run after 2_run_analysis.py and 3_model_family.py:  python3 scripts/6_verify_outputs.py
 Exits with status 1 if any check fails.
 """
 import json
@@ -8,7 +8,8 @@ import sys
 
 import pandas as pd
 
-from setup_data import OUT
+import _paths  # noqa: F401  (puts lib/ on the import path)
+from variables import OUT
 
 TAB = OUT / "tables"
 R = json.load(open(OUT / "results.json"))

@@ -1,11 +1,11 @@
-"""Paper 15 analysis: ways households access the internet in Borama District.
+"""Survey-weighted analysis of the ways households access the internet in Borama District.
 
 Survey-weighted analysis of the ten selected predictors: descriptives, outcome-scale scan, design-based
 bivariate screening, multicollinearity, sequential multinomial models,
 average marginal effects, diagnostics and sensitivity analyses.
-The unweighted model family is in model_family.py.
+The unweighted model family is in 3_model_family.py.
 
-Run:  python3 run_analysis.py      (from this folder)
+Run:  python3 scripts/2_run_analysis.py      (from the repository root)
 """
 import json
 import warnings
@@ -17,9 +17,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import log_loss, accuracy_score
 
-from setup_data import (load, design, OUTCOME, OUT_LABELS, OUT_SHORT, CATS, CONTS, BLOCK_A, BLOCK_B,
+import _paths  # noqa: F401  (puts lib/ on the import path)
+from variables import (load, design, OUTCOME, OUT_LABELS, OUT_SHORT, CATS, CONTS, BLOCK_A, BLOCK_B,
                         BLOCK_C, PRIMARY, EXTRA, OUT)
-from excluded_vs_included import calibrated_weights
+from atlas_margins import calibrated_weights
 from svy import (SvyMlogit, svy_prop, svy_mean, rao_scott, svy_anova, svychisq_f, margins, contrast,
                  level_ci, design_df)
 
