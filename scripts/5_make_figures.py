@@ -1,4 +1,12 @@
-"""Publication figures (run after 2_run_analysis.py and 3_model_family.py)."""
+"""Step 5: Draw Figures 1 to 3 and Supplementary Figure S1.
+
+Run this script after 2_run_analysis.py and 3_model_family.py, because it reads their results.
+From the repository's main folder, run:
+
+    python3 scripts/5_make_figures.py
+
+The figures are saved in outputs/figures/.
+"""
 import json
 
 import matplotlib
@@ -19,7 +27,7 @@ R = json.load(open(OUT / "results.json"))
 plt.rcParams.update({"font.family": "DejaVu Serif", "font.size": 9, "axes.spines.top": False,
                      "axes.spines.right": False, "axes.edgecolor": "#52514e", "axes.labelcolor": "#0b0b0b",
                      "xtick.color": "#52514e", "ytick.color": "#52514e", "savefig.dpi": 300})
-# Categorical slots 1-5 of the validated reference palette, fixed order by outcome code
+# One colour per route, always in the same order (outcome codes 0 to 4)
 COL = {0: "#2a78d6", 1: "#eb6834", 2: "#1baf7a", 3: "#eda100", 4: "#e87ba4"}
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e0"
 LEV = [0, 1, 2, 3, 4]
@@ -86,7 +94,7 @@ for ax, (var, title, ticks) in zip(axes.ravel(), panels):
     for j, lv in enumerate(LEV):
         q = s[s.outcome == lv].set_index("level").loc[lvls]
         off = (j - 2) * 0.07
-        # lines only where the categories are ordered (expenditure); points alone for nominal predictors
+        # Join the points with lines only for spending, whose categories have a natural order
         ax.plot(xs + off, 100 * q.pr, color=COL[lv], lw=1.6 if var == "monthly_expenditure" else 0,
                 marker="o", ms=4, label=OUT_SHORT[lv], zorder=3)
         ax.vlines(xs + off, 100 * q.lo.clip(lower=0), 100 * q.hi, color=COL[lv], lw=0.8, alpha=0.8, zorder=2)

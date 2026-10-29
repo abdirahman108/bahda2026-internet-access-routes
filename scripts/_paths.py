@@ -1,4 +1,4 @@
-"""Put the shared modules in lib/ on the import path for the numbered scripts."""
+"""Let the numbered scripts import the shared code in the lib/ folder."""
 import sys
 from pathlib import Path
 

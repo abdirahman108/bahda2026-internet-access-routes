@@ -1,4 +1,4 @@
-"""Variable definitions, data loading and model design matrices."""
+"""Variable names, codes, and comparison groups; loading the data; and building the model inputs."""
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ OUT_LABELS = {0: "No internet access", 1: "Mobile data on smartphone", 2: "Mobil
 OUT_SHORT = {0: "No access", 1: "Smartphone data", 2: "Feature-phone data", 3: "Home Wi-Fi/fibre",
              4: "Public Wi-Fi/café"}
 
-# name, label, type, reference level, ordered level codes
+# For each categorical variable: name, label, reference (comparison) code, and the codes in display order
 CATS = [
     ("residence", "Residence", 1, [1, 2, 3]),
     ("head_sex", "Sex of household head", 2, [2, 1]),
@@ -33,8 +33,8 @@ CATS = [
 CONTS = [("head_age", "Age of household head (years)", 10.0),
          ("household_size", "Household size (members)", 1.0)]
 
-# Ten predictors selected a priori for their relevance to household internet access,
-# entered in three blocks for the sequential models (manuscript Section 2.10)
+# The ten predictors, chosen before the analysis began. Models 1 to 3 add them in three groups
+# (manuscript Section 2.10).
 BLOCK_A = ["residence", "head_age", "head_sex", "head_education", "household_size"]
 BLOCK_B = ["head_employment", "monthly_expenditure", "electricity_source", "youth_vocational_training"]
 BLOCK_C = ["smartphone"]
@@ -42,7 +42,7 @@ PRIMARY = BLOCK_A + BLOCK_B + BLOCK_C
 SELECTED10 = ["residence", "head_age", "head_sex", "head_education", "monthly_expenditure", "smartphone",
            "electricity_source", "household_size", "head_employment", "youth_vocational_training"]
 assert sorted(PRIMARY) == sorted(SELECTED10)
-# further household ICT items kept in the cleaned file, used only in a sensitivity model
+# Five extra questions about household technology, used only in sensitivity analysis S5
 EXTRA = ["head_marital_status", "primary_income_source", "basic_mobile", "computer_tablet",
          "head_digital_literacy"]
 
@@ -50,15 +50,16 @@ EXTRA = ["head_marital_status", "primary_income_source", "basic_mobile", "comput
 def load():
     df, meta = pyreadstat.read_dta(str(DATA))
     vl = {k: meta.value_labels.get(v, {}) for k, v in meta.variable_to_label.items()}
-    # Q106 code 0 is "Missing/unspecified" in the BAHDA variable guide and the Atlas (Table 1.1.8); it is kept
-    # as its own "Not reported" category so no household is dropped. Older extracts label it "No schooling".
+    # Education code 0 means the answer is missing, according to the BAHDA variable guide and Atlas
+    # Table 1.1.8. It stays as its own "Not reported" group, so no household is left out. Older versions
+    # of the analysis file label this code "No schooling".
     vl.setdefault("head_education", {})[0] = "Not reported"
     for c in df.columns:
         if c not in ("sub_zone",) and df[c].dtype != object:
             pass
     df["psu_hh"] = df["record_id"].astype("int64").astype(str)
-    # Sensitivity PSU: operational sub-zone cluster in the four urban strata; each household
-    # is its own PSU where no complete cluster code exists (peri-urban, rural, and a few urban records).
+    # Sampling units for sensitivity analysis S1: the sub-zone in the four urban strata. Where there is no
+    # sub-zone code (peri-urban, rural, and a few urban households), each household is its own unit.
     urban_cluster = (df["sampling_stratum"] <= 4) & (df["sub_zone"].str.strip() != "")
     df["psu_cluster"] = np.where(urban_cluster, "C_" + df["sub_zone"].astype(str), "H_" + df["psu_hh"])
     return df, vl

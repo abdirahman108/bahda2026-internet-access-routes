@@ -1,7 +1,10 @@
-# Data
+# Data folder
 
-Place the analytical data file here as `borama_internet_access.dta`. It is not part of the repository.
+Put the analysis data file in this folder, and name it `borama_internet_access.dta`.
 
-The BAHDA-2026 household microdata are held by Amoud University and are released only under its
-data-governance procedures. Everything in this folder except this note is ignored by git, so a data file
-placed here cannot be committed by accident. See "How to reproduce" in the main README.
+The data file isn't part of the repository. Amoud University holds the BAHDA-2026 household survey
+data and releases them only under its data-governance procedures. To learn how to request the data,
+see [About the data](../README.md#about-the-data) in the main README.
+
+Git ignores everything in this folder except this file, so you can't save a data file to the repository
+by mistake.

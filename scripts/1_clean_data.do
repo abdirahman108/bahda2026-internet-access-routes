@@ -1,20 +1,26 @@
 version 16.0
 set more off
-* Ways households access the internet in Borama District: Evidence from the BAHDA-2026 Household Survey
+* Step 1: Turn the full BAHDA-2026 survey file into the analysis file.
+* Study: Ways Households Access the Internet in Borama District, Somaliland: Evidence from the
+* BAHDA-2026 Household Survey
 * Researcher: Abdirahman Mohamed Haji Abubakar
-* Run from the repository root:  do scripts/1_clean_data.do
-* Input: the authorised BAHDA-2026 analytical microdata (raw variable names,
-* 2,896 consented households). It is not distributed with this repository;
-* set the path below to your local copy before running.
+*
+* You need this step only if you have the full survey file (2,896 households, with the survey's
+* original variable names). The file isn't part of this repository. Before you run this script, set
+* the path on the next line to your copy of the file.
+*
+* To run this script, open Stata in the repository's main folder and run:
+*     do scripts/1_clean_data.do
+* The script saves data/borama_internet_access.dta.
 global BAHDA_RAW "data/BAHDA2026_analytical_microdata.dta"
 use "$BAHDA_RAW", clear
 
-* 1. Keep the selected paper variables plus record ID, weight and stratum.
+* 1. Keep the variables used in the study, plus the household ID, weight, and stratum.
 keep what_is_the_main_way_your_ residence3 v102 v101 v106 v_902_roughly_what_was_you v114 v1001 v104 v121 has_any_household_member_1 does_your_household_own_a__002 how_would_you_rate_the_dig v113 v103 v_901_what_is_the_primary_ id wgt bahda_strata_code v_002_zone v_003_sub_zone
 
-* 2. Recode by SOURCE VALUE LABELS, before removing missing values.
-* Education code 1 ("None") is Missing/unspecified in the BAHDA variable guide and Atlas Table 1.1.8;
-* it is kept as its own "Not reported" category (0) so that no household is dropped.
+* 2. Recode each variable, using the labels in the survey file, before removing missing answers.
+* Education code 1 ("None") means the answer is missing, according to the BAHDA variable guide and
+* Atlas Table 1.1.8. It becomes its own "Not reported" group (code 0), so no household is left out.
 recode what_is_the_main_way_your_ (1 = 3) (2 = 2) (3 = 1) (4 = 0) (5 = 4)
 recode v101 (1 = 2) (2 = 1)
 recode v106 (1 = 0) (2 = 1) (3 = 2) (4 = 3) (5 = 4)
@@ -29,7 +35,7 @@ recode v113 (1 = 1) (2 = 0)
 recode v103 (1 = 5) (2 = 1) (3 = 2) (4 = 3) (5 = 4)
 recode v_901_what_is_the_primary_ (1 = 3) (2 = 2) (3 = 1) (4 = 7) (5 = 4) (6 = 6) (7 = 5)
 
-* 3. Complete cases across the outcome, all 15 predictors, and design fields.
+* 3. Keep only households with an answer for the outcome, all 15 predictors, and the design variables.
 drop if missing(what_is_the_main_way_your_)
 drop if missing(residence3)
 drop if missing(v102)
@@ -50,7 +56,7 @@ drop if missing(v_901_what_is_the_primary_)
 drop if missing(id, wgt, bahda_strata_code)
 drop if wgt <= 0
 
-* 4. Rename every retained variable.
+* 4. Give every variable a descriptive name.
 rename what_is_the_main_way_your_ DV_internet_access_mode
 rename residence3 residence
 rename v102 head_age
@@ -106,6 +112,6 @@ label values primary_income_source lbl_primary_income_source
 assert !missing(survey_weight) & survey_weight > 0
 assert !missing(record_id, sampling_stratum)
 isid record_id
-assert _N == 2707 // Expected with the supplied source file
+assert _N == 2707 // If this fails, your survey file is not the version used for the manuscript
 compress
 save "data/borama_internet_access.dta", replace

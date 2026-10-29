@@ -1,7 +1,10 @@
-"""Check that a fresh run reproduces the key numbers reported in the manuscript.
+"""Step 6: Check that your run reproduces 23 key numbers reported in the manuscript.
 
-Run after 2_run_analysis.py and 3_model_family.py:  python3 scripts/6_verify_outputs.py
-Exits with status 1 if any check fails.
+Run this script after 2_run_analysis.py and 3_model_family.py. From the repository's main folder, run:
+
+    python3 scripts/6_verify_outputs.py
+
+The script prints PASS or FAIL for each check. If any check fails, it exits with status 1.
 """
 import json
 import sys
@@ -26,7 +29,7 @@ def me(variable, level, outcome):
     return ame[(ame.variable == variable) & (ame.level.astype(str) == level) & (ame.outcome == outcome)].iloc[0]
 
 
-# (description, value from this run, value in the manuscript, absolute tolerance)
+# Each check: (what it is, value from your run, value in the manuscript, largest allowed difference)
 CHECKS = [
     ("Analytical sample (households)", R["n"], 2707, 0),
     ("Design degrees of freedom", R["dfd"], 2701, 0),
