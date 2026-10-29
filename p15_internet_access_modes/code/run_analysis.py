@@ -19,6 +19,7 @@ from sklearn.metrics import log_loss, accuracy_score
 
 from setup_data import (load, design, OUTCOME, OUT_LABELS, OUT_SHORT, CATS, CONTS, BLOCK_A, BLOCK_B,
                         BLOCK_C, PRIMARY, EXTRA, OUT)
+from excluded_vs_included import calibrated_weights
 from svy import (SvyMlogit, svy_prop, svy_mean, rao_scott, svy_anova, svychisq_f, margins, contrast,
                  level_ci, design_df)
 
@@ -359,10 +360,40 @@ d4 = df.copy()
 d4["y4"] = d4[OUTCOME].replace({4: 3})
 sens += keyrows(fit(PRIMARY, data=d4, outcome="y4"), "S7 Public Wi-Fi merged with Home Wi-Fi (4 categories)")
 sens += keyrows(fit(PRIMARY, ridge=1.0), "S8 Ridge-penalised (lambda = 1)")
+# alternative choice sets, probing IIA where substitution is most plausible
+d9 = df[df[OUTCOME] != 4].copy()
+sens += keyrows(fit(PRIMARY, data=d9), "S9 Public Wi-Fi/cyber café category dropped")
+d10 = df.copy()
+d10["y10"] = d10[OUTCOME].replace({2: 1})
+sens += keyrows(fit(PRIMARY, data=d10, outcome="y10"), "S10 Smartphone and feature-phone data merged")
+# peri-urban stratum weight capped at 3 and all weights renormalised to the sample size
+d11 = df.copy()
+d11["w_trim"] = d11.survey_weight.clip(upper=3.0)
+d11["w_trim"] *= len(d11) / d11.w_trim.sum()
+sens += keyrows(fit(PRIMARY, data=d11, weight="w_trim"), "S11 Weights capped at 3 and renormalised")
+# weights raked to the full-sample (N = 2,896) margins of stratum, outcome, employment and electricity,
+# which stand in for the 189 households excluded for expenditure "Prefer not to say"
+d12 = df.copy()
+d12["w_cal"] = calibrated_weights(d12)
+sens += keyrows(fit(PRIMARY, data=d12, weight="w_cal"), "S12 Weights calibrated to full-sample margins")
+R["calibrated_weight_range"] = [float(d12.w_cal.min()), float(d12.w_cal.max())]
 sens = pd.DataFrame(sens)
 sens.to_csv(TAB / "tableS2_sensitivity.csv", index=False)
 R["sensitivity"] = sens.to_dict("records")
 R["n_edu_none"] = int((df.head_education == 0).sum())
+
+# Kish design effect from unequal weighting and effective sample size
+R["kish_deff"] = float(len(W) * (W ** 2).sum() / W.sum() ** 2)
+R["kish_neff"] = float(W.sum() ** 2 / (W ** 2).sum())
+R["weight_share_by_stratum"] = (df.groupby("sampling_stratum").survey_weight.sum() / W.sum()).round(4).to_dict()
+# events per parameter in each equation of the primary model
+kpar = full.X.shape[1]
+R["events_per_parameter"] = {int(l): dict(n=int((y == l).sum()), k=int(kpar), epp=float((y == l).sum() / kpar))
+                             for l in LEVELS[1:]}
+# outcome distribution among households without a smartphone (shared devices)
+R["no_smartphone_outcome"] = y[df.smartphone == 0].value_counts().sort_index().to_dict()
+# full RRR table for the reduced model without smartphone ownership (Model 2)
+fits["M2"].table().to_csv(TAB / "table_model2_rrr.csv", index=False)
 
 # alternative baseline: smartphone data as base
 alt = fit(PRIMARY, base=1)

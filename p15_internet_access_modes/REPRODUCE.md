@@ -111,7 +111,7 @@ All paths are relative to `p15_internet_access_modes/output/`.
 | Figure 3 (adjusted predictions) | `tables/adjusted_predictions.csv`, `figures/Figure3_adjusted_predictions.png` | `run_analysis.py`, `make_figures.py` |
 | Diagnostics, Section 3.7 | `results.json` (`nonlinearity`, `accuracy_weighted`, `iia`), `tables/sparse_cells.csv`, `tables/diag_iia_hausman.csv`, `tables/classification_unweighted.csv` | `run_analysis.py` |
 | Table S1 (missing data) | the Stata log of `01_clean_p15.do` | `01_clean_p15.do` |
-| Table S2 (sensitivity analyses S0-S8) | `tables/tableS2_sensitivity.csv` | `run_analysis.py` |
+| Table S2 (sensitivity analyses S0-S11) | `tables/tableS2_sensitivity.csv` | `run_analysis.py` |
 | Table S3 (crude RRRs) | `tables/table_crude_rrr.csv` | `run_analysis.py` |
 | Table S4 (VIF, GVIF, checklist) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv`, `results.json` | `run_analysis.py` |
 | Table S5 (model comparison) | `tables/table5_model_comparison_sequential.csv`, `tables/table5_model_comparison_penalised.csv`, `tables/model_family/table5_model_family.csv` | `run_analysis.py`, `model_family.py` |
