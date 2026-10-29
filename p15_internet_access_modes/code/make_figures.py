@@ -35,8 +35,8 @@ fig, ax = plt.subplots(figsize=(6.3, 5.0))
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
 ax.axis("off")
-box(ax, 0.38, 0.92, 0.62, 0.10, "BAHDA-2026 Survey: consented household interviews\nN = 2,896 (6 strata, 24 zones, 96 clusters)")
-box(ax, 0.38, 0.72, 0.62, 0.10, "Households with a valid response on the outcome\n(main way of accessing the internet at home)\nN = 2,896")
+box(ax, 0.38, 0.92, 0.72, 0.10, "BAHDA-2026 Survey: consented household interviews\nN = 2,896 (6 strata, 24 zones, 96 clusters)")
+box(ax, 0.38, 0.72, 0.72, 0.12, "Households with a valid response on the outcome\n(main way of accessing the internet at home)\nN = 2,896")
 box(ax, 0.80, 0.52, 0.38, 0.15, "Excluded: n = 189\nMonthly expenditure reported\nas “Prefer not to say”\n(no other missing predictor)")
 box(ax, 0.38, 0.30, 0.62, 0.10, "Complete cases on the outcome, 10 predictors,\nweight and stratum\nn = 2,707", bold=True)
 box(ax, 0.38, 0.09, 0.70, 0.12,
@@ -85,7 +85,9 @@ for ax, (var, title, ticks) in zip(axes.ravel(), panels):
     for j, lv in enumerate(LEV):
         q = s[s.outcome == lv].set_index("level").loc[lvls]
         off = (j - 2) * 0.07
-        ax.plot(xs + off, 100 * q.pr, color=COL[lv], lw=1.6, marker="o", ms=4, label=OUT_SHORT[lv], zorder=3)
+        # lines only where the categories are ordered (expenditure); points alone for nominal predictors
+        ax.plot(xs + off, 100 * q.pr, color=COL[lv], lw=1.6 if var == "monthly_expenditure" else 0,
+                marker="o", ms=4, label=OUT_SHORT[lv], zorder=3)
         ax.vlines(xs + off, 100 * q.lo.clip(lower=0), 100 * q.hi, color=COL[lv], lw=0.8, alpha=0.8, zorder=2)
     ax.set_xticks(xs)
     ax.set_xticklabels(ticks, fontsize=7.8)
