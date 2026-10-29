@@ -1,8 +1,8 @@
 version 16.0
 set more off
-* Paper 15: Ways households access the internet in Borama District: Evidence from the BAHDA 2026 Household Survey
-* Researcher: 15 Abdirahman Mohamed Haji Abubakar
-* Run from the repository folder p15_internet_access_modes.
+* Ways households access the internet in Borama District: Evidence from the BAHDA-2026 Household Survey
+* Researcher: Abdirahman Mohamed Haji Abubakar
+* Run from the repository root:  do scripts/1_clean_data.do
 * Input: the authorised BAHDA-2026 analytical microdata (raw variable names,
 * 2,896 consented households). It is not distributed with this repository;
 * set the path below to your local copy before running.
@@ -107,4 +107,4 @@ assert !missing(record_id, sampling_stratum)
 isid record_id
 assert _N == 2707 // Expected with the supplied source file
 compress
-save "data/p15_internet_access_modes_clean.dta", replace
+save "data/borama_internet_access.dta", replace

@@ -12,9 +12,9 @@ It also writes the outcome-scale scan, unweighted bivariate screening
 coefficient table and average predicted contrasts.
 
 These unweighted fits are a comparison set only; inference in the paper uses
-the survey-weighted model in run_analysis.py.
+the survey-weighted model in 2_run_analysis.py.
 
-Run:  python3 model_family.py      (from this folder)
+Run:  python3 scripts/3_model_family.py      (from the repository root)
 """
 import json
 import warnings
@@ -27,7 +27,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import log_loss
 
-from setup_data import load, OUTCOME, OUT_LABELS, CATS, CONTS, PRIMARY, OUT
+import _paths  # noqa: F401  (puts lib/ on the import path)
+from variables import load, OUTCOME, OUT_LABELS, CATS, CONTS, PRIMARY, OUT
 from svy import SvyMlogit
 
 warnings.filterwarnings("ignore")
