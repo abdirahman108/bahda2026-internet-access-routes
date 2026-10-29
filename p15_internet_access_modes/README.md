@@ -13,15 +13,19 @@ accessing the internet at home (five nominal categories).
 | – | `code/02_analysis_p15.do` | Stata equivalent of steps 2–3 |
 | – | `code/svy.py` | Design-based estimators (Taylor linearisation, Rao–Scott second-order F, survey multinomial logit, margins) |
 | – | `code/setup_data.py` | Variable definitions, reference categories and model blocks |
+| 5 | `code/verify_outputs.py` | Checks 23 key results of a fresh run against the manuscript |
 
 Outputs are written to `output/tables`, `output/figures` and `output/results.json` (not tracked).
 
 ## Running
 
+**See [REPRODUCE.md](REPRODUCE.md) for the full step-by-step reproduction guide**, including data access,
+environment setup, and a map from every manuscript table and figure to its output file.
+
 ```
-pip install numpy pandas scipy scikit-learn statsmodels matplotlib pyreadstat
+pip install -r requirements.txt
 cd p15_internet_access_modes/code
-python3 run_analysis.py && python3 model_family.py && python3 make_figures.py
+bash run_all.sh        # runs the analysis, model family and figures, then verify_outputs.py
 ```
 
 The scripts expect the cleaned extract at `data/p15_internet_access_modes_clean.dta`.
