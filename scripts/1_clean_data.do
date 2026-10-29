@@ -13,7 +13,8 @@ use "$BAHDA_RAW", clear
 keep what_is_the_main_way_your_ residence3 v102 v101 v106 v_902_roughly_what_was_you v114 v1001 v104 v121 has_any_household_member_1 does_your_household_own_a__002 how_would_you_rate_the_dig v113 v103 v_901_what_is_the_primary_ id wgt bahda_strata_code v_002_zone v_003_sub_zone
 
 * 2. Recode by SOURCE VALUE LABELS, before removing missing values.
-* Education None is a valid No schooling category (0), not missing.
+* Education code 1 ("None") is Missing/unspecified in the BAHDA variable guide and Atlas Table 1.1.8;
+* it is kept as its own "Not reported" category (0) so that no household is dropped.
 recode what_is_the_main_way_your_ (1 = 3) (2 = 2) (3 = 1) (4 = 0) (5 = 4)
 recode v101 (1 = 2) (2 = 1)
 recode v106 (1 = 0) (2 = 1) (3 = 2) (4 = 3) (5 = 4)
@@ -79,7 +80,7 @@ label define lbl_residence 1 "Urban" 2 "Peri-Urban" 3 "Rural", replace
 label values residence lbl_residence
 label define lbl_head_sex 1 "Female" 2 "Male", replace
 label values head_sex lbl_head_sex
-label define lbl_head_education 0 "No schooling" 1 "Primary" 2 "Secondary" 3 "TVET" 4 "University", replace
+label define lbl_head_education 0 "Not reported" 1 "Primary" 2 "Secondary" 3 "TVET" 4 "University", replace
 label values head_education lbl_head_education
 label define lbl_monthly_expenditure 1 "Less than 100 USD" 2 "100-299 USD" 3 "300-599 USD" 4 "600-999 USD" 5 "1000 USD or more", replace
 label values monthly_expenditure lbl_monthly_expenditure

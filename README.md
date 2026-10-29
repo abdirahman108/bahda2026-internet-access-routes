@@ -242,7 +242,7 @@ Paths are relative to `outputs/`.
   |---|---|
   | S1 | Cluster primary sampling units |
   | S2 | Unweighted |
-  | S3 | Education "None" treated as missing |
+  | S3 | Households with education not reported dropped (complete case) |
   | S4 | Smartphone ownership removed |
   | S5 | Five extra ICT items added |
   | S6 | Influential households removed |

@@ -349,9 +349,9 @@ sens += keyrows(full, "S0 Primary: survey-weighted, strata, household PSU")
 sens += keyrows(fit(PRIMARY, psu="psu_cluster"), "S1 Urban sub-zone clusters as PSU")
 df["_one"] = 1.0
 sens += keyrows(fit(PRIMARY, weight="_one"), "S2 Unweighted")
-# with "None" set to missing the no-schooling reference is empty, so primary education becomes the reference
-sens += keyrows(fit(PRIMARY, data=df[df.head_education != 0].copy(), drop=["head_education=1"]),
-                "S3 Education 'none' treated as missing")
+# complete-case alternative: drop the households whose education was not reported
+sens += keyrows(fit(PRIMARY, data=df[df.head_education != 0].copy(), drop=["head_education=0"]),
+                "S3 Education not reported: households dropped")
 sens += keyrows(fit(BLOCK_A + BLOCK_B), "S4 Smartphone ownership removed (M2)")
 s5 = fit(PRIMARY + EXTRA)
 sens += keyrows(s5, "S5 Five further household ICT items added")

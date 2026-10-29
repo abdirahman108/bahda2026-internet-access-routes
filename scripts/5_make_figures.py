@@ -107,7 +107,7 @@ ame = pd.read_csv(TAB / "table4_ame.csv")
 sel = [("residence", "2", "Peri-urban vs urban"), ("residence", "3", "Rural vs urban"),
        ("monthly_expenditure", "3", "US$300–599 vs <100"), ("monthly_expenditure", "5", "US$≥1000 vs <100"),
        ("electricity_source", "2", "Solar vs grid"), ("electricity_source", "4", "No electricity vs grid"),
-       ("smartphone", "1", "Owns smartphone"), ("head_education", "4", "University vs no schooling"),
+       ("smartphone", "1", "Owns smartphone"), ("head_education", "4", "University vs primary"),
        ("head_employment", "2", "Private vs self-employed"), ("head_employment", "4", "Government vs self-employed"),
        ("youth_vocational_training", "1", "Youth vocational training")]
 fig, axes = plt.subplots(1, 4, figsize=(7.2, 4.6), sharey=True)
