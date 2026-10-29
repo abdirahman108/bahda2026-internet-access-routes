@@ -1,0 +1,131 @@
+"""Publication figures for Paper 15 (run after run_analysis.py)."""
+import json
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyBboxPatch
+import numpy as np
+import pandas as pd
+
+from setup_data import OUT, OUT_SHORT
+
+FIG = OUT / "figures"
+FIG.mkdir(parents=True, exist_ok=True)
+TAB = OUT / "tables"
+R = json.load(open(OUT / "results.json"))
+
+plt.rcParams.update({"font.family": "DejaVu Serif", "font.size": 9, "axes.spines.top": False,
+                     "axes.spines.right": False, "axes.edgecolor": "#52514e", "axes.labelcolor": "#0b0b0b",
+                     "xtick.color": "#52514e", "ytick.color": "#52514e", "savefig.dpi": 300})
+# Categorical slots 1-5 of the validated reference palette, fixed order by outcome code
+COL = {0: "#2a78d6", 1: "#eb6834", 2: "#1baf7a", 3: "#eda100", 4: "#e87ba4"}
+INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e0"
+LEV = [0, 1, 2, 3, 4]
+
+
+# ---------------------------------------------------------------- Figure 1
+def box(ax, x, y, w, h, text, bold=False):
+    ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h, boxstyle="round,pad=0.01,rounding_size=0.015",
+                                fc="white", ec=INK, lw=0.8))
+    ax.text(x, y, text, ha="center", va="center", fontsize=8.5, weight="bold" if bold else "normal", wrap=True)
+
+
+fig, ax = plt.subplots(figsize=(6.3, 5.0))
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.axis("off")
+box(ax, 0.38, 0.92, 0.62, 0.10, "BAHDA-2026 Survey: consented household interviews\nN = 2,896 (6 strata, 24 zones, 96 clusters)")
+box(ax, 0.38, 0.72, 0.62, 0.10, "Households with a valid response on the outcome\n(main way of accessing the internet at home)\nN = 2,896")
+box(ax, 0.80, 0.52, 0.38, 0.15, "Excluded: n = 189\nMonthly expenditure reported\nas “Prefer not to say”\n(no other missing predictor)")
+box(ax, 0.38, 0.30, 0.62, 0.10, "Complete cases on the outcome, 10 predictors,\nweight and stratum\nn = 2,707", bold=True)
+box(ax, 0.38, 0.09, 0.70, 0.12,
+    "Final unweighted analytical sample: n = 2,707\nUrban 2,295 | Peri-urban 201 | Rural 211\nSum of normalised weights = 2,705.4 (not a sample size)")
+for y0, y1 in [(0.87, 0.77), (0.67, 0.35), (0.25, 0.15)]:
+    ax.annotate("", xy=(0.38, y1), xytext=(0.38, y0), arrowprops=dict(arrowstyle="-|>", color=INK, lw=0.8))
+ax.annotate("", xy=(0.61, 0.52), xytext=(0.38, 0.52), arrowprops=dict(arrowstyle="-|>", color=INK, lw=0.8))
+fig.savefig(FIG / "Figure1_sample_flow.png", bbox_inches="tight")
+plt.close(fig)
+
+# ---------------------------------------------------------------- Figure 2
+res = pd.read_csv(TAB / "outcome_by_residence.csv")
+ov = pd.read_csv(TAB / "outcome_distribution_overall.csv")
+ov["residence"] = 0
+d = pd.concat([ov[["level", "p", "lo", "hi", "residence"]], res[["level", "p", "lo", "hi", "residence"]]])
+groups = {0: "Borama District\n(all households)", 1: "Urban", 2: "Peri-urban", 3: "Rural"}
+fig, ax = plt.subplots(figsize=(6.5, 3.9))
+bw = 0.15
+x = np.arange(4)
+for i, lv in enumerate(LEV):
+    s = d[d.level == lv].set_index("residence").loc[[0, 1, 2, 3]]
+    xs = x + (i - 2) * (bw + 0.012)
+    ax.bar(xs, 100 * s.p, width=bw, color=COL[lv], label=OUT_SHORT[lv], zorder=2)
+    ax.errorbar(xs, 100 * s.p, yerr=[100 * (s.p - s.lo), 100 * (s.hi - s.p)], fmt="none", ecolor=MUTED,
+                elinewidth=0.7, capsize=1.5, zorder=3)
+ax.set_xticks(x)
+ax.set_xticklabels([groups[g] for g in [0, 1, 2, 3]])
+ax.set_ylabel("Weighted percentage of households (%)")
+ax.yaxis.grid(True, color=GRID, lw=0.6, zorder=0)
+ax.set_axisbelow(True)
+ax.legend(ncol=5, fontsize=7.2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, 1.12))
+fig.savefig(FIG / "Figure2_outcome_by_residence.png", bbox_inches="tight")
+plt.close(fig)
+
+# ---------------------------------------------------------------- Figure 3
+pp = pd.read_csv(TAB / "adjusted_predictions.csv")
+panels = [("residence", "A. Residence", ["Urban", "Peri-urban", "Rural"]),
+          ("monthly_expenditure", "B. Monthly expenditure (USD)", ["<100", "100–299", "300–599", "600–999", "≥1000"]),
+          ("electricity_source", "C. Electricity source", ["Grid", "Solar", "Generator", "None"]),
+          ("smartphone", "D. Household owns a smartphone", ["No", "Yes"])]
+fig, axes = plt.subplots(2, 2, figsize=(7.0, 6.0), sharey=True)
+for ax, (var, title, ticks) in zip(axes.ravel(), panels):
+    s = pp[pp.variable == var]
+    lvls = sorted(s.level.unique())
+    xs = np.arange(len(lvls))
+    for j, lv in enumerate(LEV):
+        q = s[s.outcome == lv].set_index("level").loc[lvls]
+        off = (j - 2) * 0.07
+        ax.plot(xs + off, 100 * q.pr, color=COL[lv], lw=1.6, marker="o", ms=4, label=OUT_SHORT[lv], zorder=3)
+        ax.vlines(xs + off, 100 * q.lo.clip(lower=0), 100 * q.hi, color=COL[lv], lw=0.8, alpha=0.8, zorder=2)
+    ax.set_xticks(xs)
+    ax.set_xticklabels(ticks, fontsize=7.8)
+    ax.set_title(title, loc="left", fontsize=9.5, color=INK)
+    ax.yaxis.grid(True, color=GRID, lw=0.6)
+    ax.set_axisbelow(True)
+for ax in axes[:, 0]:
+    ax.set_ylabel("Adjusted predicted probability (%)")
+h, l = axes[0, 0].get_legend_handles_labels()
+fig.legend(h, l, ncol=5, frameon=False, fontsize=7.6, loc="upper center", bbox_to_anchor=(0.5, 1.02))
+fig.tight_layout(rect=(0, 0, 1, 0.96))
+fig.savefig(FIG / "Figure3_adjusted_predictions.png", bbox_inches="tight")
+plt.close(fig)
+
+# ---------------------------------------------------------------- Figure 4
+ame = pd.read_csv(TAB / "table4_ame.csv")
+sel = [("residence", "2", "Peri-urban vs urban"), ("residence", "3", "Rural vs urban"),
+       ("monthly_expenditure", "3", "US$300–599 vs <100"), ("monthly_expenditure", "5", "US$≥1000 vs <100"),
+       ("electricity_source", "2", "Solar vs grid"), ("electricity_source", "4", "No electricity vs grid"),
+       ("smartphone", "1", "Owns smartphone"), ("head_education", "4", "University vs no schooling"),
+       ("head_employment", "2", "Private vs self-employed"), ("head_employment", "4", "Government vs self-employed"),
+       ("youth_vocational_training", "1", "Youth vocational training")]
+fig, axes = plt.subplots(1, 4, figsize=(7.2, 4.6), sharey=True)
+outs = [0, 1, 2, 3]
+ylab = [s[2] for s in sel]
+yy = np.arange(len(sel))[::-1]
+for ax, o in zip(axes, outs):
+    for k, (v, lv, _) in enumerate(sel):
+        r = ame[(ame.variable == v) & (ame.level.astype(str) == lv) & (ame.outcome == o)].iloc[0]
+        ax.hlines(yy[k], 100 * r.lo, 100 * r.hi, color=COL[o], lw=1.2)
+        ax.plot(100 * r.ame, yy[k], "o", color=COL[o], ms=4.5, mec="white", mew=0.6)
+    ax.axvline(0, color=MUTED, lw=0.7, ls="--")
+    ax.set_title(OUT_SHORT[o], fontsize=8.5, color=INK)
+    ax.xaxis.grid(True, color=GRID, lw=0.5)
+    ax.set_axisbelow(True)
+    ax.tick_params(axis="x", labelsize=7.5)
+axes[0].set_yticks(yy)
+axes[0].set_yticklabels(ylab, fontsize=7.8)
+fig.supxlabel("Average marginal effect (percentage points, 95% CI)", fontsize=8.5)
+fig.tight_layout()
+fig.savefig(FIG / "Figure4_average_marginal_effects.png", bbox_inches="tight")
+plt.close(fig)
+print("figures written")
