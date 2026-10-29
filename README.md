@@ -139,8 +139,8 @@ A full run takes about four minutes on a laptop.
 ### 2. Get the code and the data
 
 ```bash
-git clone https://github.com/abdirahman108/amoud-bahda-analysis.git
-cd amoud-bahda-analysis
+git clone https://github.com/abdirahman108/bahda2026-internet-access-routes.git
+cd bahda2026-internet-access-routes
 ```
 
 Copy the analytical extract to `data/borama_internet_access.dta`. If you have the full file instead,
