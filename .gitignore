@@ -1,0 +1,8 @@
+# BAHDA-2026 household microdata must not be redistributed
+*.dta
+**/data/
+# generated outputs and manuscripts are kept outside the repository
+**/output/
+**/manuscript/
+__pycache__/
+*.pyc
