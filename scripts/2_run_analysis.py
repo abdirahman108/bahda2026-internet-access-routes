@@ -8,7 +8,7 @@ This script uses the survey weights throughout. It does the following, in order:
 4. Fits three models, each adding a group of predictors (Table 3).
 5. Converts the main model into percentage-point differences and predicted percentages (Table 4,
    Figure 3).
-6. Runs model checks and the sensitivity analyses S1 to S12 (Supplementary Table S2).
+6. Runs model checks and the sensitivity analyses S1 to S15 (Supplementary Table S2).
 
 The models without survey weights are in 3_model_family.py.
 
@@ -91,6 +91,7 @@ R["outcome_by_residence"] = {int(r): g.set_index("level")[["n", "p", "lo", "hi"]
 # 3. Table 2: household characteristics by route (weighted row %), with Rao-Scott tests
 # ---------------------------------------------------------------------------
 rows = []
+rowci = []  # unweighted cell counts and 95% CIs for every row percentage in Table 2
 biv = []
 for name, label, ref, levels in CATS:
     rs = svychisq_f(df[name], y, W, H, PSU)
@@ -106,6 +107,9 @@ for name, label, ref, levels in CATS:
                  wpct=100 * c.p, wlo=100 * c.lo, whi=100 * c.hi)
         for _, q in rp.iterrows():
             d[f"row_{int(q.level)}"] = 100 * q.p
+            rowci.append(dict(variable=name, label=label, level=int(c.level), level_label=lab(name, c.level),
+                              n_row=int(c.n), outcome=int(q.level), outcome_label=OUT_LABELS[int(q.level)],
+                              n_cell=int(q.n), pct=100 * q.p, lo=100 * q.lo, hi=100 * q.hi))
         rows.append(d)
 for name, label, scale in CONTS:
     an = svy_anova(df[name], y, W, H, PSU)
@@ -121,6 +125,7 @@ for name, label, scale in CONTS:
     rows.append(d)
 t2 = pd.DataFrame(rows)
 t2.to_csv(TAB / "table2_characteristics_by_mode.csv", index=False)
+pd.DataFrame(rowci).to_csv(TAB / "tableS_table2_row_ci.csv", index=False)
 biv = pd.DataFrame(biv)
 biv.to_csv(TAB / "table_bivariate_screening.csv", index=False)
 R["bivariate"] = biv.set_index("variable")[["stat", "df1", "df2", "p", "deff"]].to_dict("index")
@@ -210,6 +215,30 @@ for name in PRIMARY:
 jw = pd.DataFrame(jw)
 jw.to_csv(TAB / "table3_joint_wald.csv", index=False)
 R["joint_wald"] = jw.set_index("variable").to_dict("index")
+
+# Test each added group of predictors as a whole (design-adjusted Wald test), in the model that adds it
+def block_cols(m, block):
+    return [c for c in m.names if any(c == v or c.startswith(v + "=") for v in block)]
+
+
+bw = []
+for mk, block, what in [("M2", BLOCK_B, "Resources and infrastructure block added to Model 1"),
+                        ("M3", BLOCK_C, "Smartphone ownership added to Model 2")]:
+    t = fits[mk].wald(block_cols(fits[mk], block))
+    bw.append(dict(model=mk, block=what, F=t["F"], df1=t["df1"], df2=t["df2"], p=t["p"]))
+bw = pd.DataFrame(bw)
+bw.to_csv(TAB / "table_block_wald.csv", index=False)
+R["block_wald"] = bw.to_dict("records")
+
+# How much clustering each result can absorb: the factor by which a standard error could grow before
+# the 95% CI of the relative risk ratio includes 1, and the matching design effect (the factor squared)
+cmg = tab3[(tab3.term != "_cons") & (~tab3.separated)].copy()
+crit = (np.log(cmg.hi) - cmg.b) / cmg.se
+cmg["se_inflation_tolerated"] = cmg.b.abs() / (crit * cmg.se)
+cmg["deff_tolerated"] = cmg.se_inflation_tolerated ** 2
+cmg = cmg[cmg.se_inflation_tolerated > 1]
+cmg[["outcome", "term", "rrr", "lo", "hi", "se_inflation_tolerated", "deff_tolerated"]].to_csv(
+    TAB / "table_clustering_margin.csv", index=False)
 
 # Relative risk ratios for each predictor on its own (Supplementary Table S3)
 crude = []
@@ -343,10 +372,10 @@ KEY = [("residence=2", 3), ("residence=3", 3), ("residence=3", 1), ("smartphone=
        ("head_education=4", 3), ("head_employment=4", 3), ("youth_vocational_training=1", 3)]
 
 
-def keyrows(m, tag):
+def keyrows(m, tag, extra=()):
     t = m.table()
     out = []
-    for term, o in KEY:
+    for term, o in list(KEY) + list(extra):
         r = t[(t.term == term) & (t.outcome == o)]
         if len(r):
             r = r.iloc[0]
@@ -393,6 +422,35 @@ d12 = df.copy()
 d12["w_cal"] = calibrated_weights(d12)
 sens += keyrows(fit(PRIMARY, data=d12, weight="w_cal"), "S12 Weights calibrated to full-sample margins")
 R["calibrated_weight_range"] = [float(d12.w_cal.min()), float(d12.w_cal.max())]
+# S13: the same model with the "Missing/unspecified" education group (raw label "None") as the comparison
+# group instead of primary education. Only the education rows change; the fit is identical.
+X13 = design(df, PRIMARY).drop(columns=["head_education=0"])
+X13.insert(0, "head_education=1", (df.head_education == 1).astype(float))
+s13 = SvyMlogit(y, X13, W, H, PSU).fit()
+t13 = s13.table()
+t13[t13.term.str.startswith("head_education")].to_csv(TAB / "tableS_education_alt_reference.csv", index=False)
+R["s13_ll"] = float(s13.info()["ll"])
+sens += keyrows(s13, "S13 Education: Missing/unspecified group as reference")
+# S14: household size in four groups instead of a straight line
+d14 = df.copy()
+X14 = design(d14, PRIMARY).drop(columns=["household_size"])
+hs = pd.cut(d14.household_size, [0, 5, 8, 11, np.inf], labels=["1-5", "6-8", "9-11", "12+"])
+R["s14_household_size_groups"] = hs.value_counts().sort_index().to_dict()
+for g in ["1-5", "9-11", "12+"]:  # comparison group: 6 to 8 members
+    X14[f"household_size_group={g}"] = (hs == g).astype(float).to_numpy()
+s14 = SvyMlogit(y, X14, W, H, PSU).fit()
+R["s14_household_size_wald"] = s14.wald([c for c in s14.names if c.startswith("household_size_group")])
+t14 = s14.table()
+t14[t14.term.str.startswith("household_size_group")].to_csv(TAB / "tableS_household_size_groups.csv",
+                                                             index=False)
+sens += keyrows(s14, "S14 Household size in four groups")
+# S15: the two highest spending bands (US$600-999 and US$1,000 or more) merged into one
+d15 = df.copy()
+d15["monthly_expenditure"] = d15.monthly_expenditure.replace({5: 4})
+X15 = design(d15, PRIMARY).drop(columns=["monthly_expenditure=5"])
+s15 = SvyMlogit(y, X15, W, H, PSU).fit()
+sens += keyrows(s15, "S15 Top two expenditure bands merged (US$600 or more)",
+                extra=[("monthly_expenditure=4", 3), ("monthly_expenditure=4", 1)])
 sens = pd.DataFrame(sens)
 sens.to_csv(TAB / "tableS2_sensitivity.csv", index=False)
 R["sensitivity"] = sens.to_dict("records")

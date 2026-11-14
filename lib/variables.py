@@ -1,11 +1,14 @@
 """Variable names, codes, and comparison groups; loading the data; and building the model inputs."""
 from pathlib import Path
+import os
+
 import numpy as np
 import pandas as pd
 import pyreadstat
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data" / "borama_internet_access.dta"
+# The data file. To keep the file where it is, set the BAHDA_DATA environment variable to its full path.
+DATA = Path(os.environ.get("BAHDA_DATA", ROOT / "data" / "borama_internet_access.dta"))
 OUT = ROOT / "outputs"
 
 OUTCOME = "DV_internet_access_mode"
