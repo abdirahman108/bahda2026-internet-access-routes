@@ -29,6 +29,8 @@ plt.rcParams.update({"font.family": "DejaVu Serif", "font.size": 9, "axes.spines
                      "xtick.color": "#52514e", "ytick.color": "#52514e", "savefig.dpi": 300})
 # One colour per route, always in the same order (outcome codes 0 to 4)
 COL = {0: "#2a78d6", 1: "#eb6834", 2: "#1baf7a", 3: "#eda100", 4: "#e87ba4"}
+# A pattern per route as well, so the bars can be told apart without colour
+HATCH = {0: "", 1: "///", 2: "...", 3: "xx", 4: "---"}
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e6e5e0"
 LEV = [0, 1, 2, 3, 4]
 
@@ -44,15 +46,17 @@ fig, ax = plt.subplots(figsize=(6.3, 5.0))
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
 ax.axis("off")
-box(ax, 0.38, 0.92, 0.72, 0.10, "BAHDA-2026 Survey: consented household interviews\nN = 2,896 (6 strata, 24 zones, 96 clusters)")
-box(ax, 0.38, 0.72, 0.72, 0.12, "Households with a valid response on the outcome\n(main way of accessing the internet at home)\nN = 2,896")
+box(ax, 0.38, 0.93, 0.72, 0.09, "BAHDA-2026 Survey: submissions received\nN = 2,923 (6 strata, 24 zones, 96 clusters)")
+box(ax, 0.80, 0.81, 0.38, 0.08, "Excluded: n = 27\nNo consent recorded")
+box(ax, 0.38, 0.69, 0.72, 0.12, "Consented household interviews, all with a valid response\non the outcome (main internet access route)\nN = 2,896")
 box(ax, 0.80, 0.52, 0.38, 0.15, "Excluded: n = 189\nMonthly expenditure reported\nas “Prefer not to say”\n(no other missing predictor)")
 box(ax, 0.38, 0.30, 0.62, 0.10, "Complete cases on the outcome, 10 predictors,\nweight and stratum\nn = 2,707", bold=True)
 box(ax, 0.38, 0.09, 0.70, 0.12,
     "Final unweighted analytical sample: n = 2,707\nUrban 2,295 | Peri-urban 201 | Rural 211\nSum of normalised weights = 2,705.4 (not a sample size)")
-for y0, y1 in [(0.87, 0.77), (0.67, 0.35), (0.25, 0.15)]:
+for y0, y1 in [(0.885, 0.75), (0.63, 0.35), (0.25, 0.15)]:
     ax.annotate("", xy=(0.38, y1), xytext=(0.38, y0), arrowprops=dict(arrowstyle="-|>", color=INK, lw=0.8))
-ax.annotate("", xy=(0.61, 0.52), xytext=(0.38, 0.52), arrowprops=dict(arrowstyle="-|>", color=INK, lw=0.8))
+for yy_ in (0.52, 0.81):
+    ax.annotate("", xy=(0.61, yy_), xytext=(0.38, yy_), arrowprops=dict(arrowstyle="-|>", color=INK, lw=0.8))
 fig.savefig(FIG / "Figure1_sample_flow.png", bbox_inches="tight")
 plt.close(fig)
 
@@ -68,7 +72,10 @@ x = np.arange(4)
 for i, lv in enumerate(LEV):
     s = d[d.level == lv].set_index("residence").loc[[0, 1, 2, 3]]
     xs = x + (i - 2) * (bw + 0.012)
-    ax.bar(xs, 100 * s.p, width=bw, color=COL[lv], label=OUT_SHORT[lv], zorder=2)
+    ax.bar(xs, 100 * s.p, width=bw, color=COL[lv], label=OUT_SHORT[lv], zorder=2, hatch=HATCH[lv],
+           edgecolor="white", linewidth=0.3)
+    for xv, pv, hv in zip(xs, 100 * s.p, 100 * s.hi):
+        ax.text(xv, hv + 0.8, f"{pv:.0f}", ha="center", va="bottom", fontsize=5.8, color=INK)
     ax.errorbar(xs, 100 * s.p, yerr=[100 * (s.p - s.lo), 100 * (s.hi - s.p)], fmt="none", ecolor=MUTED,
                 elinewidth=0.7, capsize=1.5, zorder=3)
 ax.set_xticks(x)
@@ -83,7 +90,7 @@ plt.close(fig)
 # ---------------------------------------------------------------- Figure 3
 pp = pd.read_csv(TAB / "adjusted_predictions.csv")
 panels = [("residence", "A. Residence", ["Urban", "Peri-urban", "Rural"]),
-          ("monthly_expenditure", "B. Monthly expenditure (USD)", ["<100", "100–299", "300–599", "600–999", "≥1000"]),
+          ("monthly_expenditure", "B. Monthly expenditure (US$)", ["<100", "100–299", "300–599", "600–999", "≥1,000"]),
           ("electricity_source", "C. Electricity source", ["Grid", "Solar", "Generator", "None"]),
           ("smartphone", "D. Household owns a smartphone", ["No", "Yes"])]
 fig, axes = plt.subplots(2, 2, figsize=(7.0, 4.3), sharey=True)
@@ -113,7 +120,7 @@ plt.close(fig)
 # ---------------------------------------------------------------- Supplementary Figure S1
 ame = pd.read_csv(TAB / "table4_ame.csv")
 sel = [("residence", "2", "Peri-urban vs urban"), ("residence", "3", "Rural vs urban"),
-       ("monthly_expenditure", "3", "US$300–599 vs <100"), ("monthly_expenditure", "5", "US$≥1000 vs <100"),
+       ("monthly_expenditure", "3", "US$300–599 vs <US$100"), ("monthly_expenditure", "5", "≥US$1,000 vs <US$100"),
        ("electricity_source", "2", "Solar vs grid"), ("electricity_source", "4", "No electricity vs grid"),
        ("smartphone", "1", "Owns smartphone"), ("head_education", "4", "University vs primary"),
        ("head_employment", "2", "Private vs self-employed"), ("head_employment", "4", "Government vs self-employed"),

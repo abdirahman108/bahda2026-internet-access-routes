@@ -1,0 +1,4 @@
+variable,level,level_label,outcome,outcome_label,n
+residence,2,Peri-Urban,4,Public Wi-Fi/cyber café,0
+residence,3,Rural,4,Public Wi-Fi/cyber café,3
+head_education,3,TVET,4,Public Wi-Fi/cyber café,3

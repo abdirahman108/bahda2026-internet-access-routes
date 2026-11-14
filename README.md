@@ -2,8 +2,8 @@
 
 This repository contains the analysis code for the following manuscript:
 
-*Ways Households Access the Internet in Borama District, Somaliland: Evidence from the BAHDA-2026
-Household Survey*
+*Factors associated with the main route of household internet access in Borama District, Somaliland:
+a cross-sectional analysis of the BAHDA-2026 household survey*
 
 The code starts from the survey data file. It produces every table, figure, and number in the manuscript
 and its supplement. Its last step compares 25 key results with the values printed in the manuscript.
@@ -12,9 +12,8 @@ This guide is for reviewers and other researchers who want to check or reproduce
 need a background in statistics or programming to follow the steps in
 [Reproduce the results](#reproduce-the-results).
 
-> **Note:** The repository is private, and the household survey data aren't included. To request access
-> to the repository, email the corresponding author at abdirahman@amoud.edu.so and include your GitHub
-> username. To learn how to get the data, see [About the data](#about-the-data).
+> **Note:** The household survey data aren't included in this repository. To learn how to get the data,
+> see [About the data](#about-the-data).
 
 ## On this page
 
@@ -61,7 +60,7 @@ The study uses the following information:
   chose "Prefer not to say" when asked about their monthly spending, so they're left out.
 - **How it analyses them.** A regression model built for survey data with more than two unordered
   answers. The model gives each household a *survey weight* so that the results describe the whole
-  district, not only the households that were interviewed. Twelve extra analyses, called
+  district, not only the households that were interviewed. Fifteen extra analyses, called
   *sensitivity analyses*, check whether the main results change when the method changes.
 
 For definitions of the statistical terms, see the [Glossary](#glossary).
@@ -80,16 +79,19 @@ The following tree shows the main files and folders:
 ├── scripts/                      The analysis, one numbered step per file.
 │   ├── 1_clean_data.do           Step 1 (Stata): turns the full survey file into the analysis file.
 │   ├── 2_run_analysis.py         Step 2: the main analysis, Tables 2 to 4, and the sensitivity analyses.
-│   ├── 3_model_family.py         Step 3: alternative models for comparison (Table 5).
-│   ├── 4_excluded_households.py  Step 4: describes the 189 households left out (Table S1b).
+│   ├── 3_model_family.py         Step 3: alternative models for comparison (Table S9).
+│   ├── 4_excluded_households.py  Step 4: describes the 189 households left out (Table S2).
 │   ├── 5_make_figures.py         Step 5: Figures 1 to 3 and Supplementary Figure S1.
 │   ├── 6_verify_outputs.py       Step 6: compares 25 results with the manuscript.
+│   ├── r_crosscheck.R            Optional: fits the main model again in R, as an independent check.
+│   ├── 7_compare_r.py            Optional: compares the R results with the Python results.
 │   ├── stata_analysis.do         Optional: runs steps 2 and 3 in Stata, so you can compare.
 │   └── _paths.py                 Lets the scripts find the shared code in lib/.
 ├── lib/                          Code that the scripts share.
 │   ├── variables.py              Names, codes, and comparison groups for every variable; loads the data.
 │   ├── svy.py                    The survey statistics: weights, strata, and confidence intervals.
 │   └── atlas_margins.py          Totals for all 2,896 households, copied from the BAHDA-2026 Atlas.
+├── revision_outputs/             The tables and figures behind the revised manuscript (run of 14 November 2026).
 └── outputs/                      Created when you run the code. Not saved to the repository.
     ├── tables/                   Tables, as CSV files.
     ├── figures/                  Figures, as PNG images.
@@ -99,9 +101,9 @@ The following tree shows the main files and folders:
 ## About the data
 
 Amoud University holds the BAHDA-2026 household survey data. The data contain confidential household
-records, so they aren't shared publicly or stored in this repository. To request the data, contact the
-Amoud University Research and Innovation Center, which releases them under its data-governance
-procedures.
+records, so they aren't shared publicly or stored in this repository. To request a de-identified analysis file, contact
+the Directorate of Research Strategy, Development and Performance (RSDP), Amoud University, Borama,
+which releases data under the university's data-governance conditions.
 
 The repository's `.gitignore` file blocks every Stata data file (`.dta`) and everything in the `data/`
 folder except its README. This setting stops anyone from saving a data file to the repository by
@@ -136,7 +138,10 @@ The analysis runs in six steps. Each step is one file in the `scripts/` folder.
    - Fits three models, each adding a group of predictors to the one before.
    - Converts the results into percentage-point differences and predicted percentages.
    - Runs checks on how well the model fits.
-   - Runs the twelve sensitivity analyses (S1 to S12).
+   - Tests each added group of predictors with an adjusted Wald test.
+   - Runs the fifteen sensitivity analyses (S1 to S15 in the code; SA1 to SA15 in the manuscript).
+   - Works out how much larger each standard error could be before a result stopped being
+     statistically significant (the clustering margin).
 3. **Fit alternative models** (`3_model_family.py`). Fits related models, without survey weights, so
    that you can compare how well they fit with the main model.
 4. **Describe the households left out** (`4_excluded_households.py`). The analysis file doesn't
@@ -233,7 +238,7 @@ python3 scripts/6_verify_outputs.py
 ### Results that can vary slightly
 
 If you use other package versions, your results still match the manuscript to the decimal places it
-reports. The one exception is the lasso and elastic-net models in Table 5. These models use a random
+reports. The one exception is the lasso and elastic-net models that step 3 fits for comparison. These models use a random
 starting point, so the third decimal place of their results can vary between runs and computers.
 
 ## Find the source of each result
@@ -252,15 +257,21 @@ it. File paths are relative to the `outputs/` folder.
 | Model 2 (the main model without smartphone ownership) | `tables/table_model2_rrr.csv` | `2_run_analysis.py` |
 | Table 4 (percentage-point differences) | `tables/table4_ame.csv` | `2_run_analysis.py` |
 | Figure 3 (predicted percentages) | `tables/adjusted_predictions.csv`, `figures/Figure3_adjusted_predictions.png` | `2_run_analysis.py`, `5_make_figures.py` |
-| Table 5 (AIC and BIC model comparison) | `tables/table5_information_criteria.csv` (Models 1 to 4, with the gap to the best value on each criterion), `tables/table5_model_comparison_sequential.csv`, `tables/table5_model_comparison_penalised.csv`, `tables/model_family/table5_model_family.csv`, and the `ic_best` entry in `results.json` | `2_run_analysis.py`, `3_model_family.py` |
-| Table 6 (overlap between predictors, and the checklist) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv`, `results.json` | `2_run_analysis.py` |
-| Model checks (Section 3.7) | The `nonlinearity`, `iia`, `kish_deff`, `kish_neff`, and `events_per_parameter` entries in `results.json`; `tables/sparse_cells.csv`; `tables/diag_iia_hausman.csv` | `2_run_analysis.py` |
 | Table S1 (missing answers) | The log that `1_clean_data.do` prints | `1_clean_data.do` |
-| Table S1b (households left out compared with those included) | `tables/tableS1b_excluded_vs_included.csv`, `tables/tableS1b_tests.csv`, `excluded_profile.json` | `4_excluded_households.py` |
-| Table S2 (sensitivity analyses S0 to S12) | `tables/tableS2_sensitivity.csv` | `2_run_analysis.py` |
-| Table S3 (each predictor on its own) | `tables/table_crude_rrr.csv` | `2_run_analysis.py` |
-| Table S4 (smartphone data as the comparison route) | `tables/tableS3_alt_baseline_smartphone.csv` | `2_run_analysis.py` |
-| Table S5 (actual compared with predicted route) | `tables/classification_unweighted.csv` | `2_run_analysis.py` |
+| Table S2 (households left out compared with those included) | `tables/tableS1b_excluded_vs_included.csv`, `tables/tableS1b_tests.csv`, `excluded_profile.json` | `4_excluded_households.py` |
+| Tables S3 and S4 (sensitivity analyses SA1 to SA15) | `tables/tableS2_sensitivity.csv` | `2_run_analysis.py` |
+| Table S5 (each predictor on its own) | `tables/table_crude_rrr.csv` | `2_run_analysis.py` |
+| Table S6 (Model 2, without smartphone ownership) | `tables/table_model2_rrr.csv` | `2_run_analysis.py` |
+| Table S7 (education with the Missing/unspecified group as the comparison group) | `tables/tableS_education_alt_reference.csv` | `2_run_analysis.py` |
+| Table S8 (counts and confidence intervals for every cell of Table 2) | `tables/tableS_table2_row_ci.csv` | `2_run_analysis.py` |
+| Table S9 (model comparison and Wald tests) | `tables/table5_information_criteria.csv`, `tables/table_block_wald.csv`, `tables/table3_joint_wald.csv`, `tables/table5_model_comparison_sequential.csv` | `2_run_analysis.py`, `3_model_family.py` |
+| Table S10 (overlap between predictors) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv` | `2_run_analysis.py` |
+| Table S11 (model checks) | The `nonlinearity`, `iia`, `kish_deff`, `kish_neff`, and `events_per_parameter` entries in `results.json`; `tables/sparse_cells.csv`; `tables/diag_iia_hausman.csv` | `2_run_analysis.py` |
+| Table S12 (smartphone data as the comparison route) | `tables/tableS3_alt_baseline_smartphone.csv` | `2_run_analysis.py` |
+| Table S13 (actual compared with predicted route) | `tables/classification_unweighted.csv` | `2_run_analysis.py` |
+| Table S14 (clustering margin) | `tables/table_clustering_margin.csv` | `2_run_analysis.py` |
+| Table S15 (Python compared with R) | `tables/tableS_software_agreement.csv`, `tables/r_crosscheck_coefficients.csv` | `r_crosscheck.R`, `7_compare_r.py` |
+| Household size in four groups (SA14) | `tables/tableS_household_size_groups.csv` | `2_run_analysis.py` |
 | Supplementary Figure S1 (percentage-point differences) | `figures/FigureS1_average_marginal_effects.png` | `5_make_figures.py` |
 
 ### Read the CSV files
@@ -310,7 +321,7 @@ This section is for readers who want the statistical details.
   |---|---|
   | S1 | Urban sub-zones are the sampling units. |
   | S2 | No survey weights. |
-  | S3 | Households whose education wasn't reported are left out. |
+  | S3 | Households whose head's education is classified Missing/unspecified are left out. |
   | S4 | Smartphone ownership is removed. |
   | S5 | Five extra questions about household technology are added. |
   | S6 | The 1% of households with the most influence on the results are removed. |
@@ -320,9 +331,28 @@ This section is for readers who want the statistical details.
   | S10 | The two mobile-data routes are combined. |
   | S11 | Survey weights are capped at 3. |
   | S12 | The weights are adjusted to match the Atlas totals for all 2,896 households. |
+  | S13 | The Missing/unspecified education group is the comparison group. |
+  | S14 | Household size is entered in four groups (1 to 5, 6 to 8, 9 to 11, 12 or more). |
+  | S15 | The two highest spending bands are combined (US$600 or more). |
+
+  The manuscript calls these analyses SA1 to SA15.
 
 - **Effective sample size.** Because the weights vary, the 2,707 households carry the same
-  statistical information as about 1,040 households with equal weights. The Kish design effect is 2.61.
+  statistical information as 1,039 households with equal weights. The Kish design effect is 2.606.
+
+## Check the results in R
+
+The main model was fitted a second time in R, as an independent check. You need R 4.6 or later with the
+packages `haven`, `survey`, `VGAM`, and `svyVGAM`. From the repository's main folder, run:
+
+```bash
+Rscript scripts/r_crosscheck.R
+python3 scripts/7_compare_r.py
+```
+
+The second command writes `outputs/tables/tableS_software_agreement.csv`. In the run behind the revised
+manuscript (R 4.6.2, survey 4.5, svyVGAM 1.3), all 87 coefficients that can be estimated agreed with the
+Python results to at least six decimal places.
 
 ## Check the results in Stata
 
@@ -333,8 +363,9 @@ command in Stata:
 do scripts/stata_analysis.do
 ```
 
-The script runs the same survey design, models, percentage-point differences, and sensitivity
-analyses. Its estimates and confidence intervals match `outputs/tables/table3_full_model_rrr.csv` and
+The script runs the same survey design, models, percentage-point differences, and the first twelve
+sensitivity analyses. It hasn't been run again for the revised manuscript; the R check above is the
+independent check that the manuscript reports. Its estimates and confidence intervals match `outputs/tables/table3_full_model_rrr.csv` and
 `outputs/tables/table4_ame.csv` to the decimal places in the manuscript.
 
 There is one expected difference. For peri-urban households and public Wi-Fi, Stata reports the result
@@ -347,7 +378,7 @@ no peri-urban household used public Wi-Fi.
 |---|---|
 | The message `Missing data/borama_internet_access.dta` appears. | Put the data file in the `data/` folder. See [About the data](#about-the-data). |
 | `1_clean_data.do` stops at an `assert` line. | Your survey file isn't the version used for the manuscript. Ask the data custodian which version you have. |
-| A lasso or elastic-net value in Table 5 differs in the third decimal place. | This is expected, because these models use a random starting point. The 25 checks still pass. |
+| A lasso or elastic-net value from step 3 differs in the third decimal place. | This is expected, because these models use a random starting point. The 25 checks still pass. |
 | `6_verify_outputs.py` reports `FAIL` for any other value. | Check that your package versions match `requirements.txt`, and that the data file has 2,707 rows. |
 
 ## Glossary
@@ -367,7 +398,8 @@ The following table explains the statistical terms used in this guide and in the
 
 ## Cite this work and contact us
 
-If you use this code, cite the manuscript and the survey:
+If you use this code, cite the manuscript and the survey. Citation details for the code are in
+`CITATION.cff`.
 
 Amoud University. (2026). *BAHDA-2026 Atlas*. https://doi.org/10.67178/pgc3n7h0
 
