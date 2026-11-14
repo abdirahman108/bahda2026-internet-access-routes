@@ -1,0 +1,5 @@
+R: R version 4.6.2 (2026-10-29)
+survey: 4.5
+svyVGAM: 1.3
+VGAM: 1.1.14
+haven: 2.5.5

@@ -1,0 +1,11 @@
+variable,label,df,gvif,gvif_adj
+residence,Residence,2,1.2548422006704434,1.0583937800359753
+head_age,Age of household head (years),1,1.0378752893535446,1.018761645014939
+head_sex,Sex of household head,1,1.0523845562344996,1.0258579610426093
+head_education,Education of household head,4,1.245405799704626,1.027812417921024
+household_size,Household size (members),1,1.0142958486206721,1.007122558887781
+head_employment,Employment status of household head,3,1.1452516189800832,1.022861468857829
+monthly_expenditure,Average monthly household expenditure,4,1.2009855155764029,1.0231568618333213
+electricity_source,Primary electricity source,3,1.335587517397131,1.049410467704746
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,1.0883159310160018,1.0432238163577372
+smartphone,Household owns a smartphone,1,1.1913920391030577,1.0915090650576649

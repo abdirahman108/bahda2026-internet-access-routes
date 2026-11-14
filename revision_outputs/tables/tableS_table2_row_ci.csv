@@ -1,0 +1,136 @@
+variable,label,level,level_label,n_row,outcome,outcome_label,n_cell,pct,lo,hi
+residence,Residence,1,Urban,2295,0,No internet access,149,6.488625120560826,5.533215206140656,7.595739317059848
+residence,Residence,1,Urban,2295,1,Mobile data on smartphone,633,27.154460035806537,25.34330383831372,29.044694828156036
+residence,Residence,1,Urban,2295,2,Mobile data on feature phone,507,22.04724195926715,20.3671087517898,23.824507765438984
+residence,Residence,1,Urban,2295,3,Home Wi-Fi/fibre,927,40.69328883037245,38.65490652792111,42.764228759678794
+residence,Residence,1,Urban,2295,4,Public Wi-Fi/cyber café,79,3.616384053993031,2.898402317599317,4.503971942493521
+residence,Residence,2,Peri-Urban,201,0,No internet access,82,40.79601990049751,34.16115529949639,47.78426035653736
+residence,Residence,2,Peri-Urban,201,1,Mobile data on smartphone,78,38.805970149253724,32.26528904164884,45.77648097456795
+residence,Residence,2,Peri-Urban,201,2,Mobile data on feature phone,35,17.41293532338308,12.737997187755305,23.344610624384835
+residence,Residence,2,Peri-Urban,201,3,Home Wi-Fi/fibre,6,2.9850746268656714,1.3379058451091572,6.526025487031731
+residence,Residence,2,Peri-Urban,201,4,Public Wi-Fi/cyber café,0,0.0,0.0,0.0
+residence,Residence,3,Rural,211,0,No internet access,52,24.644549763033176,19.258057511592256,30.959949967789452
+residence,Residence,3,Rural,211,1,Mobile data on smartphone,90,42.65402843601896,36.099820047901474,49.476832756012755
+residence,Residence,3,Rural,211,2,Mobile data on feature phone,54,25.59241706161138,20.11703206090211,31.961804245563545
+residence,Residence,3,Rural,211,3,Home Wi-Fi/fibre,12,5.687203791469194,3.2427893933660683,9.787822824294492
+residence,Residence,3,Rural,211,4,Public Wi-Fi/cyber café,3,1.4218009478672986,0.4550418891443548,4.35267804287684
+head_sex,Sex of household head,2,Male,1289,0,No internet access,120,20.60048092680561,16.84681650528733,24.939660375351185
+head_sex,Sex of household head,2,Male,1289,1,Mobile data on smartphone,380,34.10615644284684,29.973955915980905,38.494864042577106
+head_sex,Sex of household head,2,Male,1289,2,Mobile data on feature phone,280,21.41076514652766,18.07337806715338,25.175052716161368
+head_sex,Sex of household head,2,Male,1289,3,Home Wi-Fi/fibre,463,21.61177512766959,19.660386388387433,23.69971279203457
+head_sex,Sex of household head,2,Male,1289,4,Public Wi-Fi/cyber café,46,2.270822356150304,1.6772665967412164,3.067873305783466
+head_sex,Sex of household head,1,Female,1418,0,No internet access,163,23.84453945621347,20.0699992576154,28.079572917543043
+head_sex,Sex of household head,1,Female,1418,1,Mobile data on smartphone,421,33.033027268868295,29.083420921796932,37.237361420413876
+head_sex,Sex of household head,1,Female,1418,2,Mobile data on feature phone,316,19.806621511469125,16.862064600438195,23.122366355590056
+head_sex,Sex of household head,1,Female,1418,3,Home Wi-Fi/fibre,482,21.729104484155517,19.79195856740306,23.79959092456765
+head_sex,Sex of household head,1,Female,1418,4,Public Wi-Fi/cyber café,36,1.5867072792935932,1.1421056057495738,2.200531998376772
+head_education,Education of household head,1,Primary,605,0,No internet access,86,26.780043596445346,21.044809874325583,33.416754338874426
+head_education,Education of household head,1,Primary,605,1,Mobile data on smartphone,199,35.12652586706367,29.135242300146235,41.626141635740325
+head_education,Education of household head,1,Primary,605,2,Mobile data on feature phone,159,22.808179459970386,18.048809878405727,28.387830388914125
+head_education,Education of household head,1,Primary,605,3,Home Wi-Fi/fibre,144,13.649703408389744,11.736784446093258,15.81852270074078
+head_education,Education of household head,1,Primary,605,4,Public Wi-Fi/cyber café,17,1.6355476681308525,1.0201535124978738,2.6123724127427495
+head_education,Education of household head,2,Secondary,442,0,No internet access,36,15.803825785390485,10.407052003645942,23.272247638694513
+head_education,Education of household head,2,Secondary,442,1,Mobile data on smartphone,144,38.864727210765686,31.693869819761726,46.552290179879776
+head_education,Education of household head,2,Secondary,442,2,Mobile data on feature phone,87,20.649076769247497,15.200769477330144,27.418770157181143
+head_education,Education of household head,2,Secondary,442,3,Home Wi-Fi/fibre,163,22.83949980421327,19.43306410341924,26.645570162736437
+head_education,Education of household head,2,Secondary,442,4,Public Wi-Fi/cyber café,12,1.8428704303830725,1.0057318218749787,3.3532133061653537
+head_education,Education of household head,3,TVET,77,0,No internet access,10,26.687204540112337,11.985665306756257,49.317203549706086
+head_education,Education of household head,3,TVET,77,1,Mobile data on smartphone,24,31.200807635475137,16.11370379902063,51.706740050291366
+head_education,Education of household head,3,TVET,77,2,Mobile data on feature phone,17,15.551832353284317,6.657508816684889,32.22635320391576
+head_education,Education of household head,3,TVET,77,3,Home Wi-Fi/fibre,23,24.622813567386928,11.967780826053104,43.974974369566766
+head_education,Education of household head,3,TVET,77,4,Public Wi-Fi/cyber café,3,1.9373419037412865,0.5904746061978781,6.1658495515976
+head_education,Education of household head,4,University,1005,0,No internet access,37,6.786235810146825,4.2336781478730625,10.705731634895512
+head_education,Education of household head,4,University,1005,1,Mobile data on smartphone,232,28.487046325529736,24.387701688389694,32.97494886762835
+head_education,Education of household head,4,University,1005,2,Mobile data on feature phone,189,18.864110618728414,15.638356559504047,22.577175073909565
+head_education,Education of household head,4,University,1005,3,Home Wi-Fi/fibre,508,42.55244880492221,39.102751278865796,46.07621516997503
+head_education,Education of household head,4,University,1005,4,Public Wi-Fi/cyber café,39,3.310158440672843,2.395774314003538,4.557236710541084
+head_education,Education of household head,0,Not reported,578,0,No internet access,114,35.88009268106221,29.81452828323214,42.43358954174398
+head_education,Education of household head,0,Not reported,578,1,Mobile data on smartphone,202,34.274614411001224,28.456821696885836,40.60672589558237
+head_education,Education of household head,0,Not reported,578,2,Mobile data on feature phone,144,20.866733940252303,16.375280346731547,26.204086303631343
+head_education,Education of household head,0,Not reported,578,3,Home Wi-Fi/fibre,107,8.06147332545059,6.828269582693566,9.494700605889841
+head_education,Education of household head,0,Not reported,578,4,Public Wi-Fi/cyber café,11,0.9170856422336702,0.48162519599998954,1.739385307093086
+head_employment,Employment status of household head,1,Self-employed,1105,0,No internet access,134,23.031328816298917,18.903858567030525,27.751597785282456
+head_employment,Employment status of household head,1,Self-employed,1105,1,Mobile data on smartphone,370,38.896868599993546,34.29902624129597,43.70109440316562
+head_employment,Employment status of household head,1,Self-employed,1105,2,Mobile data on feature phone,249,19.62579609530924,16.38093827195482,23.334054525597715
+head_employment,Employment status of household head,1,Self-employed,1105,3,Home Wi-Fi/fibre,330,17.267068735699304,15.42631555740461,19.277404827858575
+head_employment,Employment status of household head,1,Self-employed,1105,4,Public Wi-Fi/cyber café,22,1.1789377526989946,0.7483970372010618,1.8525385571515265
+head_employment,Employment status of household head,2,Private,764,0,No internet access,36,9.757570784968868,6.1881981447321,15.055359051496703
+head_employment,Employment status of household head,2,Private,764,1,Mobile data on smartphone,190,27.40567890933237,22.65098457122305,32.736031328033214
+head_employment,Employment status of household head,2,Private,764,2,Mobile data on feature phone,166,25.639509465986,20.817885029435796,31.138708089113443
+head_employment,Employment status of household head,2,Private,764,3,Home Wi-Fi/fibre,336,33.29370764177612,30.17988316030281,36.560572640725105
+head_employment,Employment status of household head,2,Private,764,4,Public Wi-Fi/cyber café,36,3.9035331979366554,2.810942230205251,5.397221685900167
+head_employment,Employment status of household head,3,Unemployed,385,0,No internet access,89,43.66492369248385,36.16501883275388,51.46619246682661
+head_employment,Employment status of household head,3,Unemployed,385,1,Mobile data on smartphone,114,29.664374526009397,22.98081452265294,37.349119421400445
+head_employment,Employment status of household head,3,Unemployed,385,2,Mobile data on feature phone,80,15.908986280011886,11.36438653067205,21.82349673608772
+head_employment,Employment status of household head,3,Unemployed,385,3,Home Wi-Fi/fibre,92,9.713335013299842,8.14207389820338,11.54969331530423
+head_employment,Employment status of household head,3,Unemployed,385,4,Public Wi-Fi/cyber café,10,1.0483804881950154,0.5591113624808495,1.9573733110140707
+head_employment,Employment status of household head,4,Government,453,0,No internet access,24,10.611573548272709,6.030000433459284,18.007145719111392
+head_employment,Employment status of household head,4,Government,453,1,Mobile data on smartphone,127,31.99433621136744,25.234593258718768,39.60562786187673
+head_employment,Employment status of household head,4,Government,453,2,Mobile data on feature phone,101,21.92863951391999,16.53336275568082,28.483711164198557
+head_employment,Employment status of household head,4,Government,453,3,Home Wi-Fi/fibre,187,33.192819931472364,27.77832233662499,39.09145324169152
+head_employment,Employment status of household head,4,Government,453,4,Public Wi-Fi/cyber café,14,2.2726307949674993,1.3400337928606025,3.8290791628117797
+monthly_expenditure,Average monthly household expenditure,1,Less than 100 USD,479,0,No internet access,114,40.999315596497496,34.18176499353053,48.18123463538128
+monthly_expenditure,Average monthly household expenditure,1,Less than 100 USD,479,1,Mobile data on smartphone,159,29.994754241701443,23.94393705724822,36.83411877848315
+monthly_expenditure,Average monthly household expenditure,1,Less than 100 USD,479,2,Mobile data on feature phone,141,22.282120606369027,17.34470600159534,28.14642636432007
+monthly_expenditure,Average monthly household expenditure,1,Less than 100 USD,479,3,Home Wi-Fi/fibre,52,5.431463553792771,3.796613502730485,7.713845321809315
+monthly_expenditure,Average monthly household expenditure,1,Less than 100 USD,479,4,Public Wi-Fi/cyber café,13,1.2923460016392403,0.7070170573813426,2.3507874238617257
+monthly_expenditure,Average monthly household expenditure,2,100-299 USD,886,0,No internet access,109,22.561493883079695,18.037534563527693,27.834768741852724
+monthly_expenditure,Average monthly household expenditure,2,100-299 USD,886,1,Mobile data on smartphone,309,36.17196741783346,31.236334422398325,41.41774145326657
+monthly_expenditure,Average monthly household expenditure,2,100-299 USD,886,2,Mobile data on feature phone,229,24.264722484938424,20.138397908992456,28.930246058714893
+monthly_expenditure,Average monthly household expenditure,2,100-299 USD,886,3,Home Wi-Fi/fibre,210,15.025037898178716,12.687791428783676,17.70552521144171
+monthly_expenditure,Average monthly household expenditure,2,100-299 USD,886,4,Public Wi-Fi/cyber café,29,1.976778315969696,1.3573232473367602,2.8707128623318474
+monthly_expenditure,Average monthly household expenditure,3,300-599 USD,764,0,No internet access,39,10.13922598561392,6.577416264434209,15.313666124856889
+monthly_expenditure,Average monthly household expenditure,3,300-599 USD,764,1,Mobile data on smartphone,203,36.708343777265334,31.7016275065862,42.01930542727099
+monthly_expenditure,Average monthly household expenditure,3,300-599 USD,764,2,Mobile data on feature phone,153,16.9521011820413,13.87743524419927,20.54547381791063
+monthly_expenditure,Average monthly household expenditure,3,300-599 USD,764,3,Home Wi-Fi/fibre,348,34.07439358373794,30.96320584862132,37.329159927263575
+monthly_expenditure,Average monthly household expenditure,3,300-599 USD,764,4,Public Wi-Fi/cyber café,21,2.1259354713415153,1.38445109599315,3.2514505071864757
+monthly_expenditure,Average monthly household expenditure,4,600-999 USD,332,0,No internet access,15,12.909103040821297,7.079432350427957,22.382943355797384
+monthly_expenditure,Average monthly household expenditure,4,600-999 USD,332,1,Mobile data on smartphone,71,23.137514003062726,16.74041376926205,31.067022567733556
+monthly_expenditure,Average monthly household expenditure,4,600-999 USD,332,2,Mobile data on feature phone,38,17.71978808973231,11.25403397592416,26.779358686316694
+monthly_expenditure,Average monthly household expenditure,4,600-999 USD,332,3,Home Wi-Fi/fibre,196,43.656594873218566,38.27783438246971,49.18883207896233
+monthly_expenditure,Average monthly household expenditure,4,600-999 USD,332,4,Public Wi-Fi/cyber café,12,2.576999993165111,1.451369421698177,4.535452073544538
+monthly_expenditure,Average monthly household expenditure,5,1000 USD or more,246,0,No internet access,6,5.583752288415504,1.8901675265512359,15.364655176097802
+monthly_expenditure,Average monthly household expenditure,5,1000 USD or more,246,1,Mobile data on smartphone,59,38.44090440671896,31.649254248712815,45.71520722781724
+monthly_expenditure,Average monthly household expenditure,5,1000 USD or more,246,2,Mobile data on feature phone,35,12.793773947133658,9.107119670388856,17.68248959378922
+monthly_expenditure,Average monthly household expenditure,5,1000 USD or more,246,3,Home Wi-Fi/fibre,139,40.82890757152627,36.56127262947449,45.2394493214583
+monthly_expenditure,Average monthly household expenditure,5,1000 USD or more,246,4,Public Wi-Fi/cyber café,7,2.3526617862056107,1.1228835685453615,4.86304716014876
+electricity_source,Primary electricity source,1,Electric system / Grid,1996,0,No internet access,113,8.551352640843108,6.486993802009539,11.19401378899424
+electricity_source,Primary electricity source,1,Electric system / Grid,1996,1,Mobile data on smartphone,630,35.10198041905498,31.89599397025925,38.448287977147636
+electricity_source,Primary electricity source,1,Electric system / Grid,1996,2,Mobile data on feature phone,413,22.536696021822912,19.71087953641258,25.638266719663637
+electricity_source,Primary electricity source,1,Electric system / Grid,1996,3,Home Wi-Fi/fibre,791,31.74706204055494,29.485773436431785,34.097911599274724
+electricity_source,Primary electricity source,1,Electric system / Grid,1996,4,Public Wi-Fi/cyber café,49,2.0629088777240705,1.536571221036017,2.764476517197529
+electricity_source,Primary electricity source,2,Solar,402,0,No internet access,84,38.18954542105838,31.185096412192188,45.72195055364644
+electricity_source,Primary electricity source,2,Solar,402,1,Mobile data on smartphone,103,32.12663461307928,25.450518548421925,39.62321307400572
+electricity_source,Primary electricity source,2,Solar,402,2,Mobile data on feature phone,117,20.25143965040909,15.639847948074515,25.80683857049046
+electricity_source,Primary electricity source,2,Solar,402,3,Home Wi-Fi/fibre,89,8.623970956865268,7.224036046998693,10.265180142162084
+electricity_source,Primary electricity source,2,Solar,402,4,Public Wi-Fi/cyber café,9,0.8084093585879791,0.41552497664994653,1.5669260756554795
+electricity_source,Primary electricity source,3,Generator,139,0,No internet access,9,9.596012864058165,3.653869893164617,22.904332617523213
+electricity_source,Primary electricity source,3,Generator,139,1,Mobile data on smartphone,37,43.706847165884824,31.394249390432915,56.84709443214493
+electricity_source,Primary electricity source,3,Generator,139,2,Mobile data on feature phone,38,26.934767564101588,16.692372895528163,40.41311312189653
+electricity_source,Primary electricity source,3,Generator,139,3,Home Wi-Fi/fibre,45,15.725001968295093,12.442709623200253,19.678539343786035
+electricity_source,Primary electricity source,3,Generator,139,4,Public Wi-Fi/cyber café,10,4.037370437660353,2.243711926666051,7.15988724097053
+electricity_source,Primary electricity source,4,No access,170,0,No internet access,77,59.45925469318972,48.91676525443815,69.19611041374503
+electricity_source,Primary electricity source,4,No access,170,1,Mobile data on smartphone,31,24.627646329980895,16.281587031012133,35.440828301098406
+electricity_source,Primary electricity source,4,No access,170,2,Mobile data on feature phone,28,9.853979851485994,5.598831586858764,16.768618779739043
+electricity_source,Primary electricity source,4,No access,170,3,Home Wi-Fi/fibre,20,3.8002013898874587,2.507646090016188,5.719910062966943
+electricity_source,Primary electricity source,4,No access,170,4,Public Wi-Fi/cyber café,14,2.258917735455921,1.357936322203614,3.7350587543321003
+smartphone,Household owns a smartphone,0,No,423,0,No internet access,140,57.46332365603909,50.96089854214315,63.71740852423437
+smartphone,Household owns a smartphone,0,No,423,1,Mobile data on smartphone,80,16.85000250574196,12.11149291373525,22.958136987448004
+smartphone,Household owns a smartphone,0,No,423,2,Mobile data on feature phone,103,14.42202871104706,10.71230372506958,19.14104350377431
+smartphone,Household owns a smartphone,0,No,423,3,Home Wi-Fi/fibre,76,8.855849439930513,6.772879427120312,11.50040313001042
+smartphone,Household owns a smartphone,0,No,423,4,Public Wi-Fi/cyber café,24,2.408795687241376,1.628041026281486,3.5504606840807624
+smartphone,Household owns a smartphone,1,Yes,2284,0,No internet access,143,11.898556440958496,9.543870874336594,14.739530937464531
+smartphone,Household owns a smartphone,1,Yes,2284,1,Mobile data on smartphone,721,38.47231678233446,35.28320097084778,41.763667105636785
+smartphone,Household owns a smartphone,1,Yes,2284,2,Mobile data on feature phone,493,22.41078739138119,19.77991915917361,25.281301297519292
+smartphone,Household owns a smartphone,1,Yes,2284,3,Home Wi-Fi/fibre,869,25.437464109073865,23.77690341958943,27.172654301856014
+smartphone,Household owns a smartphone,1,Yes,2284,4,Public Wi-Fi/cyber café,58,1.7808752762519708,1.360156557193127,2.3286570026680837
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,0,No,1240,0,No internet access,197,30.515091295499154,26.356304867536846,35.01806021442229
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,0,No,1240,1,Mobile data on smartphone,366,33.231199956815104,29.0892535832944,37.64977629489555
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,0,No,1240,2,Mobile data on feature phone,303,20.021831190411344,16.968486204870974,23.469303462142268
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,0,No,1240,3,Home Wi-Fi/fibre,335,14.616812880249972,12.87926092594685,16.544264005801406
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,0,No,1240,4,Public Wi-Fi/cyber café,39,1.6150646770244252,1.1707905781344978,2.2241312619486293
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,Yes,1467,0,No internet access,86,11.970838923274435,9.065528493755696,15.647027905140462
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,Yes,1467,1,Mobile data on smartphone,435,33.97166535624336,30.18168218597487,37.97868354412535
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,Yes,1467,2,Mobile data on feature phone,293,21.310438142562727,18.11512164870117,24.897999863876798
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,Yes,1467,3,Home Wi-Fi/fibre,610,30.44018667803476,28.264004433343665,32.70752826835571
+youth_vocational_training,Member aged 15–35 completed vocational/technical training,1,Yes,1467,4,Public Wi-Fi/cyber café,43,2.3068708998847125,1.690534916372284,3.140732223531169
