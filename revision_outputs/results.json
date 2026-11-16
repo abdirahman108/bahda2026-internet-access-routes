@@ -5529,31 +5529,5 @@
    "n_separated": 1
   }
  ],
- "model_cmp_pen": [
-  {
-   "model": "Multinomial logit (unpenalised)",
-   "cv_logloss": 1.158778064777254,
-   "cv_accuracy": 0.49986786924736554,
-   "nonzero_coef": 105
-  },
-  {
-   "model": "Ridge multinomial",
-   "cv_logloss": 1.1546216343951505,
-   "cv_accuracy": 0.49699199462796795,
-   "nonzero_coef": 105
-  },
-  {
-   "model": "Lasso multinomial",
-   "cv_logloss": 1.197575863771812,
-   "cv_accuracy": 0.5077959114347961,
-   "nonzero_coef": 96
-  },
-  {
-   "model": "Elastic-net multinomial",
-   "cv_logloss": 1.177152387301453,
-   "cv_accuracy": 0.4949430733294526,
-   "nonzero_coef": 97
-  }
- ],
  "dfd": 2701
 }

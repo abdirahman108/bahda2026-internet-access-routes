@@ -1,6 +1,6 @@
 """Step 5: Draw Figures 1 to 3 and Supplementary Figure S1.
 
-Run this script after 2_run_analysis.py and 3_model_family.py, because it reads their results.
+Run this script after 2_run_analysis.py, because it reads its results.
 From the repository's main folder, run:
 
     python3 scripts/5_make_figures.py
@@ -49,7 +49,7 @@ ax.axis("off")
 box(ax, 0.38, 0.93, 0.72, 0.09, "BAHDA-2026 Survey: submissions received\nN = 2,923 (6 strata, 24 zones, 96 clusters)")
 box(ax, 0.80, 0.81, 0.38, 0.08, "Excluded: n = 27\nNo consent recorded")
 box(ax, 0.38, 0.69, 0.72, 0.12, "Consented household interviews, all with a valid response\non the outcome (main internet access route)\nN = 2,896")
-box(ax, 0.80, 0.52, 0.38, 0.15, "Excluded: n = 189\nMonthly expenditure reported\nas “Prefer not to say”\n(no other missing predictor)")
+box(ax, 0.80, 0.52, 0.38, 0.15, "Excluded: n = 189\nMonthly expenditure not stated\n(skip logic, non-response or\n“Prefer not to say”)")
 box(ax, 0.38, 0.30, 0.62, 0.10, "Complete cases on the outcome, 10 predictors,\nweight and stratum\nn = 2,707", bold=True)
 box(ax, 0.38, 0.09, 0.70, 0.12,
     "Final unweighted analytical sample: n = 2,707\nUrban 2,295 | Peri-urban 201 | Rural 211\nSum of normalised weights = 2,705.4 (not a sample size)")

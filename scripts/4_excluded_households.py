@@ -1,4 +1,7 @@
-"""Step 4: Describe the 189 households left out because they chose "Prefer not to say" about spending.
+"""Step 4: Describe the 189 households left out because their monthly spending was not stated.
+
+The Atlas lists these households as "Prefer not to say". The data office describes the group as answers
+affected by skip logic, non-response, or "Prefer not to say".
 
 The analysis file contains only the 2,707 households with complete answers. The BAHDA-2026 Atlas
 publishes counts for all 2,896 households, with and without weights, for every question used here.

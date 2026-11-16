@@ -1,0 +1,52 @@
+{
+  "title": "Analysis code for: Factors associated with the main route of household internet access in Borama District, Somaliland: a cross-sectional analysis of the BAHDA-2026 household survey",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "access_right": "open",
+  "license": "mit",
+  "description": "<p>Code that reproduces every table and figure of the manuscript and its supplement: a Stata file that derives the analysis file, Python scripts for the survey-weighted multinomial logistic regression, average marginal effects and fifteen sensitivity analyses, an R cross-check (survey, svyVGAM), and the output tables and figures of the reported run.</p><p>The BAHDA-2026 household microdata are not included. They are released by the Directorate of Research Strategy, Development and Performance, Amoud University, under its data access procedure.</p>",
+  "creators": [
+    {
+      "name": "Abubakar, Abdirahman M.",
+      "affiliation": "Faculty of ICT, Amoud University, Borama, Somaliland",
+      "orcid": "0009-0000-7075-7285"
+    },
+    {
+      "name": "Muse, Abdikarim Mahdi",
+      "affiliation": "Faculty of ICT, Amoud University, Borama, Somaliland",
+      "orcid": "0009-0003-2359-6628"
+    },
+    {
+      "name": "Abdillahi, Abdiwahab Y.",
+      "affiliation": "Faculty of ICT, Amoud University, Borama, Somaliland",
+      "orcid": "0009-0002-5723-3035"
+    },
+    {
+      "name": "Ibrahim, Ahmed Abdillahi",
+      "affiliation": "Faculty of ICT, Amoud University, Borama, Somaliland",
+      "orcid": "0009-0008-6121-1019"
+    },
+    {
+      "name": "Mead, Khalid Omar",
+      "affiliation": "Faculty of ICT, Amoud University, Borama, Somaliland",
+      "orcid": "0009-0002-7344-1651"
+    }
+  ],
+  "keywords": [
+    "internet access",
+    "digital divide",
+    "household survey",
+    "multinomial logistic regression",
+    "survey weights",
+    "Somaliland",
+    "BAHDA-2026"
+  ],
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "10.67178/pgc3n7h0",
+      "relation": "references",
+      "resource_type": "publication-report"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-"""Step 6: Check that your run reproduces 25 key numbers reported in the manuscript.
+"""Step 6: Check that your run reproduces 21 key numbers reported in the manuscript.
 
-Run this script after 2_run_analysis.py and 3_model_family.py. From the repository's main folder, run:
+Run this script after 2_run_analysis.py. From the repository's main folder, run:
 
     python3 scripts/6_verify_outputs.py
 
@@ -18,7 +18,6 @@ TAB = OUT / "tables"
 R = json.load(open(OUT / "results.json"))
 t3 = pd.read_csv(TAB / "table3_full_model_rrr.csv")
 ame = pd.read_csv(TAB / "table4_ame.csv")
-fam = pd.read_csv(TAB / "model_family" / "table5_model_family.csv").set_index("model")
 mc = {m["model"]: m for m in R["model_cmp"]}
 
 
@@ -53,10 +52,6 @@ CHECKS = [
     ("AME peri-urban on home Wi-Fi/fibre, points (Table 4)", 100 * me("residence", "2", 3).ame, -25.7, 0.05),
     ("Model 3 BIC, lowest BIC (Table 5)", mc["M3"]["bic"], 6548.488, 0.001),
     ("Model 4 (15 predictors) AIC, lowest AIC (Table 5)", mc["M4"]["aic"], 5835.574, 0.001),
-    ("Unweighted multinomial logit log-likelihood (Table 5)", fam.loc["Multinomial logit", "ll"], -3194.513, 0.001),
-    ("Unweighted multinomial logit AIC (Table 5)", fam.loc["Multinomial logit", "aic"], 6565.026, 0.001),
-    ("Two-part nominal logit AIC (Table 5)", fam.loc["Two-part nominal logit", "aic"], 6568.035, 0.01),
-    ("Two-part nominal probit AIC (Table 5)", fam.loc["Two-part nominal probit", "aic"], 6566.869, 0.01),
 ]
 
 failed = 0

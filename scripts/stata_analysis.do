@@ -1,7 +1,8 @@
 version 16.0
 set more off
-* Optional: Run the main analysis in Stata, to check the Python results.
-* This script repeats the main parts of 2_run_analysis.py and 3_model_family.py.
+* Optional: A Stata translation of the main parts of 2_run_analysis.py.
+* It was not run for the revised manuscript. The independent check that the manuscript reports is
+* r_crosscheck.R.
 *
 * Before you run it, make sure that data/borama_internet_access.dta exists. Then open Stata in the
 * repository's main folder and run:
@@ -59,18 +60,3 @@ svyset record_id [pw = survey_weight], strata(sampling_stratum) vce(linearized)
 * Sensitivity analysis S5: add five extra questions about household technology
 svy: mlogit DV_internet_access_mode `A' `B' `C' i.head_marital_status i.primary_income_source ///
     i.basic_mobile i.computer_tablet i.head_digital_literacy, baseoutcome(0) rrr
-
-* Models without weights (Supplementary Table S5): age in years, lowest code as the comparison group
-local X i.residence i.head_sex ib1.head_education i.monthly_expenditure i.smartphone ///
-    i.electricity_source i.head_employment i.youth_vocational_training c.head_age c.household_size
-mlogit DV_internet_access_mode `X', baseoutcome(0)
-estat ic
-mlogit DV_internet_access_mode `X', baseoutcome(1)
-* Two-part models: part 1 separates home Wi-Fi or fibre from the other routes; part 2 models the rest
-gen byte homewifi = DV_internet_access_mode == 3
-logit homewifi `X'
-scalar ll_logit = e(ll)
-probit homewifi `X'
-scalar ll_probit = e(ll)
-mlogit DV_internet_access_mode `X' if DV_internet_access_mode != 3, baseoutcome(0)
-display "two-part logit LL = " ll_logit + e(ll) "   two-part probit LL = " ll_probit + e(ll)
