@@ -42,9 +42,6 @@ BLOCK_A = ["residence", "head_age", "head_sex", "head_education", "household_siz
 BLOCK_B = ["head_employment", "monthly_expenditure", "electricity_source", "youth_vocational_training"]
 BLOCK_C = ["smartphone"]
 PRIMARY = BLOCK_A + BLOCK_B + BLOCK_C
-SELECTED10 = ["residence", "head_age", "head_sex", "head_education", "monthly_expenditure", "smartphone",
-           "electricity_source", "household_size", "head_employment", "youth_vocational_training"]
-assert sorted(PRIMARY) == sorted(SELECTED10)
 # Five extra questions about household technology, used only in sensitivity analysis S5
 EXTRA = ["head_marital_status", "primary_income_source", "basic_mobile", "computer_tablet",
          "head_digital_literacy"]
@@ -57,9 +54,6 @@ def load():
     # Table 1.1.8. It stays as its own "Not reported" group, so no household is left out. Older versions
     # of the analysis file label this code "No schooling".
     vl.setdefault("head_education", {})[0] = "Not reported"
-    for c in df.columns:
-        if c not in ("sub_zone",) and df[c].dtype != object:
-            pass
     df["psu_hh"] = df["record_id"].astype("int64").astype(str)
     # Sampling units for sensitivity analysis S1: the sub-zone in the four urban strata. Where there is no
     # sub-zone code (peri-urban, rural, and a few urban households), each household is its own unit.
@@ -72,7 +66,7 @@ def term_name(var, lv):
     return f"{var}={int(lv)}"
 
 
-def design(df, preds, age_scale=True):
+def design(df, preds):
     cols = {}
     for name, label, ref, levels in CATS:
         if name not in preds:
@@ -84,5 +78,5 @@ def design(df, preds, age_scale=True):
     for name, label, scale in CONTS:
         if name not in preds:
             continue
-        cols[name] = df[name].astype(float) / (scale if age_scale else 1.0)
+        cols[name] = df[name].astype(float) / scale
     return pd.DataFrame(cols, index=df.index)

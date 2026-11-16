@@ -6,7 +6,7 @@ This repository contains the analysis code for the following manuscript:
 a cross-sectional analysis of the BAHDA-2026 household survey*
 
 The code starts from the survey data file. It produces every table, figure, and number in the manuscript
-and its supplement. Its last step compares 25 key results with the values printed in the manuscript.
+and its supplement. Its last step compares 21 key results with the values printed in the manuscript.
 
 This guide is for reviewers and other researchers who want to check or reproduce the results. You don't
 need a background in statistics or programming to follow the steps in
@@ -57,7 +57,8 @@ The study uses the following information:
   - Whether the household owns a smartphone
   - Whether any member aged 15 to 35 has completed vocational training
 - **Which households it includes.** 2,707 households with complete answers. The other 189 households
-  chose "Prefer not to say" when asked about their monthly spending, so they're left out.
+  have no stated monthly spending, so they're left out. The Atlas lists them as "Prefer not to say". The
+  data office describes the group as answers affected by skip logic, non-response, or "Prefer not to say".
 - **How it analyses them.** A regression model built for survey data with more than two unordered
   answers. The model gives each household a *survey weight* so that the results describe the whole
   district, not only the households that were interviewed. Fifteen extra analyses, called
@@ -79,10 +80,9 @@ The following tree shows the main files and folders:
 ├── scripts/                      The analysis, one numbered step per file.
 │   ├── 1_clean_data.do           Step 1 (Stata): turns the full survey file into the analysis file.
 │   ├── 2_run_analysis.py         Step 2: the main analysis, Tables 2 to 4, and the sensitivity analyses.
-│   ├── 3_model_family.py         Step 3: alternative models for comparison (Table S9).
 │   ├── 4_excluded_households.py  Step 4: describes the 189 households left out (Table S2).
 │   ├── 5_make_figures.py         Step 5: Figures 1 to 3 and Supplementary Figure S1.
-│   ├── 6_verify_outputs.py       Step 6: compares 25 results with the manuscript.
+│   ├── 6_verify_outputs.py       Step 6: compares 21 results with the manuscript.
 │   ├── r_crosscheck.R            Optional: fits the main model again in R, as an independent check.
 │   ├── 7_compare_r.py            Optional: compares the R results with the Python results.
 │   ├── stata_analysis.do         Optional: runs steps 2 and 3 in Stata, so you can compare.
@@ -123,13 +123,14 @@ lists the number of the Atlas table that it comes from.
 
 ## What the code does
 
-The analysis runs in six steps. Each step is one file in the `scripts/` folder.
+The analysis runs in five steps. Each step is one file in the `scripts/` folder. There is no step 3:
+it fitted alternative models without survey weights, which the revised manuscript no longer reports.
 
 1. **Clean the data** (`1_clean_data.do`, in Stata). This step does the following:
    - Keeps the outcome, the ten predictors, five extra questions about household technology, and the
      survey design variables.
    - Recodes each variable to the codes in Table 1 of the manuscript.
-   - Removes the 189 households that answered "Prefer not to say" about their spending.
+   - Removes the 189 households with no stated monthly spending.
    - Confirms that 2,707 households remain, each with a valid weight and a unique ID.
 2. **Run the main analysis** (`2_run_analysis.py`). This step does the following:
    - Describes the households, using the survey weights, and tests how each characteristic relates to
@@ -142,18 +143,16 @@ The analysis runs in six steps. Each step is one file in the `scripts/` folder.
    - Runs the fifteen sensitivity analyses (S1 to S15 in the code; SA1 to SA15 in the manuscript).
    - Works out how much larger each standard error could be before a result stopped being
      statistically significant (the clustering margin).
-3. **Fit alternative models** (`3_model_family.py`). Fits related models, without survey weights, so
-   that you can compare how well they fit with the main model.
 4. **Describe the households left out** (`4_excluded_households.py`). The analysis file doesn't
    contain the 189 households that were left out. This step works out their characteristics by
    subtracting the analysis file's counts from the Atlas's counts for all 2,896 households.
    - As a check, the left-out households' weights add up to 190.6. This total is the Atlas's
-     weighted count for "Prefer not to say", so the subtraction is correct.
+     weighted count for its "Prefer not to say" row, so the subtraction is correct.
    - The file `lib/atlas_margins.py` also adjusts the survey weights so that the 2,707 households
      match the Atlas totals for all 2,896 households. Sensitivity analysis S12 in step 2 uses these
      adjusted weights.
 5. **Draw the figures** (`5_make_figures.py`). Draws Figures 1 to 3 and Supplementary Figure S1.
-6. **Check the results** (`6_verify_outputs.py`). Compares 25 key results with the values printed in
+6. **Check the results** (`6_verify_outputs.py`). Compares 21 key results with the values printed in
    the manuscript, allowing for rounding.
 
 ## Reproduce the results
@@ -223,13 +222,12 @@ From the repository's main folder, run the following command:
 bash run_all.sh
 ```
 
-When the run finishes, the last line reads `25 of 25 checks passed`.
+When the run finishes, the last line reads `21 of 21 checks passed`.
 
 To run the steps one at a time instead, run the following commands in this order:
 
 ```bash
 python3 scripts/2_run_analysis.py        # About 1 minute.
-python3 scripts/3_model_family.py        # About 2 minutes.
 python3 scripts/4_excluded_households.py
 python3 scripts/5_make_figures.py
 python3 scripts/6_verify_outputs.py
@@ -238,8 +236,7 @@ python3 scripts/6_verify_outputs.py
 ### Results that can vary slightly
 
 If you use other package versions, your results still match the manuscript to the decimal places it
-reports. The one exception is the lasso and elastic-net models that step 3 fits for comparison. These models use a random
-starting point, so the third decimal place of their results can vary between runs and computers.
+reports.
 
 ## Find the source of each result
 
@@ -264,7 +261,7 @@ it. File paths are relative to the `outputs/` folder.
 | Table S6 (Model 2, without smartphone ownership) | `tables/table_model2_rrr.csv` | `2_run_analysis.py` |
 | Table S7 (education with the Missing/unspecified group as the comparison group) | `tables/tableS_education_alt_reference.csv` | `2_run_analysis.py` |
 | Table S8 (counts and confidence intervals for every cell of Table 2) | `tables/tableS_table2_row_ci.csv` | `2_run_analysis.py` |
-| Table S9 (model comparison and Wald tests) | `tables/table5_information_criteria.csv`, `tables/table_block_wald.csv`, `tables/table3_joint_wald.csv`, `tables/table5_model_comparison_sequential.csv` | `2_run_analysis.py`, `3_model_family.py` |
+| Table S9 (model comparison and Wald tests) | `tables/table5_information_criteria.csv`, `tables/table_block_wald.csv`, `tables/table3_joint_wald.csv`, `tables/table5_model_comparison_sequential.csv` | `2_run_analysis.py` |
 | Table S10 (overlap between predictors) | `tables/table_vif_indicators.csv`, `tables/table_gvif.csv` | `2_run_analysis.py` |
 | Table S11 (model checks) | The `nonlinearity`, `iia`, `kish_deff`, `kish_neff`, and `events_per_parameter` entries in `results.json`; `tables/sparse_cells.csv`; `tables/diag_iia_hausman.csv` | `2_run_analysis.py` |
 | Table S12 (smartphone data as the comparison route) | `tables/tableS3_alt_baseline_smartphone.csv` | `2_run_analysis.py` |
@@ -304,7 +301,8 @@ This section is for readers who want the statistical details.
 
   This setup matches the Stata command
   `svyset record_id [pw = survey_weight], strata(sampling_stratum)`. Sensitivity analysis S1 uses the
-  64 urban sub-zones as sampling units instead.
+  64 urban sub-zones as sampling units instead. Sub-zones stand in for the survey clusters, whose
+  identifiers are not in the analysis file.
 - **Tests between two variables.** The code uses the Rao–Scott second-order F test, which matches the
   R command `survey::svychisq(~x + y, design, statistic = "F")`. For predictors that are numbers, such
   as age, it uses a design-based Wald F test.
@@ -363,10 +361,10 @@ command in Stata:
 do scripts/stata_analysis.do
 ```
 
-The script runs the same survey design, models, percentage-point differences, and the first twelve
-sensitivity analyses. It hasn't been run again for the revised manuscript; the R check above is the
-independent check that the manuscript reports. Its estimates and confidence intervals match `outputs/tables/table3_full_model_rrr.csv` and
-`outputs/tables/table4_ame.csv` to the decimal places in the manuscript.
+The script is a Stata translation of the survey design, the three models, the percentage-point
+differences, and sensitivity analyses S1 and S5. It wasn't run for the revised manuscript, so treat it
+as a starting point and not as a verified check. The R check above is the independent check that the
+manuscript reports.
 
 There is one expected difference. For peri-urban households and public Wi-Fi, Stata reports the result
 as omitted or very large. The Python code marks it as not estimable instead. Both mean the same thing:
@@ -378,7 +376,6 @@ no peri-urban household used public Wi-Fi.
 |---|---|
 | The message `Missing data/borama_internet_access.dta` appears. | Put the data file in the `data/` folder. See [About the data](#about-the-data). |
 | `1_clean_data.do` stops at an `assert` line. | Your survey file isn't the version used for the manuscript. Ask the data custodian which version you have. |
-| A lasso or elastic-net value from step 3 differs in the third decimal place. | This is expected, because these models use a random starting point. The 25 checks still pass. |
 | `6_verify_outputs.py` reports `FAIL` for any other value. | Check that your package versions match `requirements.txt`, and that the data file has 2,707 rows. |
 
 ## Glossary

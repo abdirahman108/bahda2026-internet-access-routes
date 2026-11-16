@@ -10,8 +10,6 @@ This script uses the survey weights throughout. It does the following, in order:
    Figure 3).
 6. Runs model checks and the sensitivity analyses S1 to S15 (Supplementary Table S2).
 
-The models without survey weights are in 3_model_family.py.
-
 To run this script, from the repository's main folder, run:
 
     python3 scripts/2_run_analysis.py
@@ -24,12 +22,9 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy import stats
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import log_loss, accuracy_score
 
 import _paths  # noqa: F401  (puts lib/ on the import path)
-from variables import (load, design, OUTCOME, OUT_LABELS, OUT_SHORT, CATS, CONTS, BLOCK_A, BLOCK_B,
+from variables import (load, design, OUTCOME, OUT_LABELS, CATS, CONTS, BLOCK_A, BLOCK_B,
                         BLOCK_C, PRIMARY, EXTRA, OUT)
 from atlas_margins import calibrated_weights
 from svy import (SvyMlogit, svy_prop, svy_mean, rao_scott, svy_anova, svychisq_f, margins, contrast,
@@ -316,10 +311,9 @@ R["pp"] = pp.to_dict("records")
 # 8. Model checks: straight-line effects, IIA, and influential households
 # ---------------------------------------------------------------------------
 # (a) Check that age and household size have straight-line effects by adding squared terms
-d2 = df.copy()
-Xq = design(d2, PRIMARY)
-Xq["head_age_sq"] = (d2.head_age / 10) ** 2
-Xq["household_size_sq"] = d2.household_size ** 2
+Xq = Xall.copy()
+Xq["head_age_sq"] = (df.head_age / 10) ** 2
+Xq["household_size_sq"] = df.household_size ** 2
 mq = SvyMlogit(y, Xq, W, H, PSU).fit()
 R["nonlinearity"] = {
     "age": mq.wald(["head_age_sq"]),
@@ -327,7 +321,7 @@ R["nonlinearity"] = {
 }
 
 # (b) Hausman–McFadden IIA test (unweighted model-based, as in Stata's mlogtest/hausman)
-Xf = design(df, PRIMARY)
+Xf = Xall
 mu = SvyMlogit(y, Xf, np.ones(len(df)), H, PSU).fit()
 iia = []
 k = mu.X.shape[1]
@@ -474,31 +468,8 @@ alt = fit(PRIMARY, base=1)
 alt.table().to_csv(TAB / "tableS3_alt_baseline_smartphone.csv", index=False)
 
 # ---------------------------------------------------------------------------
-# 10. Penalised models with survey weights, tuned by cross-validation
+# 10. Compare Models 1 to 4 on AIC and BIC
 # ---------------------------------------------------------------------------
-Xs = design(df, PRIMARY).to_numpy()
-mu_, sd_ = Xs.mean(0), Xs.std(0)
-Xz = (Xs - mu_) / sd_
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=2026)
-specs = {
-    "Multinomial logit (unpenalised)": dict(penalty=None, solver="lbfgs"),
-    "Ridge multinomial": dict(penalty="l2", C=0.1, solver="lbfgs"),
-    "Lasso multinomial": dict(penalty="l1", C=0.1, solver="saga"),
-    "Elastic-net multinomial": dict(penalty="elasticnet", C=0.1, l1_ratio=0.5, solver="saga"),
-}
-mc = []
-for nm, sp in specs.items():
-    ll, acc = [], []
-    for tr, te in skf.split(Xz, y):
-        clf = LogisticRegression(max_iter=5000, **sp)
-        clf.fit(Xz[tr], y.values[tr], sample_weight=W.values[tr])
-        pr = clf.predict_proba(Xz[te])
-        ll.append(log_loss(y.values[te], pr, sample_weight=W.values[te], labels=LEVELS))
-        acc.append(accuracy_score(y.values[te], pr.argmax(1), sample_weight=W.values[te]))
-    clf = LogisticRegression(max_iter=5000, **sp).fit(Xz, y.values, sample_weight=W.values)
-    nz = int((np.abs(clf.coef_) > 1e-6).sum())
-    mc.append(dict(model=nm, cv_logloss=np.mean(ll), cv_accuracy=np.mean(acc), nonzero_coef=nz))
-mc = pd.DataFrame(mc)
 cmp = pd.DataFrame(cmp)
 cmp.to_csv(TAB / "table5_model_comparison_sequential.csv", index=False)
 # AIC and BIC side by side: difference from the best model on each criterion and which model each favours
@@ -507,9 +478,7 @@ ic["delta_aic"] = ic.aic - ic.aic.min()
 ic["delta_bic"] = ic.bic - ic.bic.min()
 ic.to_csv(TAB / "table5_information_criteria.csv", index=False)
 R["ic_best"] = {"aic": ic.loc[ic.aic.idxmin(), "model"], "bic": ic.loc[ic.bic.idxmin(), "model"]}
-mc.to_csv(TAB / "table5_model_comparison_penalised.csv", index=False)
 R["model_cmp"] = cmp.to_dict("records")
-R["model_cmp_pen"] = mc.to_dict("records")
 R["dfd"] = int(full.dfd)
 
 with open(OUT / "results.json", "w") as f:

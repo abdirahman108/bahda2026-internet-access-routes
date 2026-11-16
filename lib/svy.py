@@ -8,7 +8,7 @@ replacement within each stratum. You can reproduce its results in Stata with thi
 """
 import numpy as np
 import pandas as pd
-from scipy import optimize, stats
+from scipy import stats
 
 
 # --------------------------------------------------------------------------
