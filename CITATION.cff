@@ -7,6 +7,24 @@ authors:
     given-names: Abdirahman M.
     affiliation: "Faculty of ICT, Amoud University, Borama, Somaliland"
     orcid: "https://orcid.org/0009-0000-7075-7285"
+  - family-names: Muse
+    given-names: Abdikarim Mahdi
+    affiliation: "Faculty of ICT, Amoud University, Borama, Somaliland"
+    orcid: "https://orcid.org/0009-0003-2359-6628"
+  - family-names: Abdillahi
+    given-names: Abdiwahab Y.
+    affiliation: "Faculty of ICT, Amoud University, Borama, Somaliland"
+    orcid: "https://orcid.org/0009-0002-5723-3035"
+  - family-names: Ibrahim
+    given-names: Ahmed Abdillahi
+    affiliation: "Faculty of ICT, Amoud University, Borama, Somaliland"
+    orcid: "https://orcid.org/0009-0008-6121-1019"
+  - family-names: Mead
+    given-names: Khalid Omar
+    affiliation: "Faculty of ICT, Amoud University, Borama, Somaliland"
+    orcid: "https://orcid.org/0009-0002-7344-1651"
+license: MIT
+version: "1.0.0"
 repository-code: "https://github.com/abdirahman108/bahda2026-internet-access-routes"
 date-released: "2026-11-15"
 references:
